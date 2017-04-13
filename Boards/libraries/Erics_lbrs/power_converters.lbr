@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eagle SYSTEM "eagle.dtd">
+<eagle version="7.2.0">
+<drawing>
+<settings>
+<setting alwaysvectorfont="no"/>
+<setting verticaltext="up"/>
+</settings>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<layers>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
+<layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
+<layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="97" name="Info" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="98" name="Guide" color="6" fill="1" visible="yes" active="yes"/>
+</layers>
+<library>
+<packages>
+<package name="DRQ-12/50">
+<pad name="4" x="-25.4" y="-7.62" drill="1.5" shape="square"/>
+<pad name="2" x="-25.4" y="0" drill="1.5" shape="square"/>
+<pad name="1" x="-25.4" y="7.62" drill="1.5" diameter="2.54" shape="square"/>
+<pad name="5" x="25.4" y="-7.62" drill="2.2" diameter="3.81" shape="square"/>
+<pad name="16" x="25.4" y="7.62" drill="2.2" diameter="3.81" shape="square"/>
+<pad name="10" x="24.4094" y="0" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="12" x="24.4094" y="2.0066" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="14" x="24.4094" y="4.0132" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="8" x="24.4094" y="-2.0066" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="6" x="24.4094" y="-4.0132" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="11" x="26.416" y="0" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="13" x="26.416" y="2.0066" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="15" x="26.416" y="4.0132" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="9" x="26.416" y="-2.0066" drill="1.2" diameter="1.6764" shape="octagon"/>
+<pad name="7" x="26.416" y="-4.0132" drill="1.2" diameter="1.6764" shape="octagon"/>
+<wire x1="-29.464" y1="18.669" x2="29.464" y2="18.669" width="0.127" layer="21"/>
+<wire x1="29.464" y1="18.669" x2="29.464" y2="-18.669" width="0.127" layer="21"/>
+<wire x1="29.464" y1="-18.669" x2="-29.464" y2="-18.669" width="0.127" layer="21"/>
+<wire x1="-29.464" y1="-18.669" x2="-29.464" y2="18.669" width="0.127" layer="21"/>
+<text x="0" y="3.81" size="1.27" layer="21" align="center">&gt;Name</text>
+<text x="0" y="-3.81" size="1.27" layer="21" align="center">&gt;Value</text>
+</package>
+<package name="UQQ-15/7">
+<pad name="-VIN" x="25.4" y="7.62" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="ON/OFF" x="25.4" y="0" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="+VIN" x="25.4" y="-7.62" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="+VOUT" x="-25.4" y="-7.62" drill="1.6256" diameter="3.81" shape="octagon"/>
+<pad name="+SENSE" x="-25.4" y="-3.81" drill="1.143" diameter="2.1844" shape="octagon"/>
+<pad name="TRIM" x="-25.4" y="0" drill="1.143" diameter="2.1844" shape="octagon"/>
+<pad name="-SENSE" x="-25.4" y="3.81" drill="1.143" diameter="2.1844" shape="octagon"/>
+<pad name="-VOUT" x="-25.4" y="7.62" drill="1.6256" diameter="3.81" shape="octagon"/>
+<wire x1="-28.194" y1="18.796" x2="28.194" y2="18.796" width="0.127" layer="21"/>
+<wire x1="28.194" y1="18.796" x2="28.194" y2="-18.796" width="0.127" layer="21"/>
+<wire x1="28.194" y1="-18.796" x2="-28.194" y2="-18.796" width="0.127" layer="21"/>
+<wire x1="-28.194" y1="-18.796" x2="-28.194" y2="18.796" width="0.127" layer="21"/>
+<text x="0" y="2.54" size="1.27" layer="21" align="center">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.27" layer="21" align="center">&gt;VALUE</text>
+</package>
+<package name="ALD12A48">
+<pad name="+VIN" x="-13.97" y="7.62" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="ENABLE" x="-13.97" y="0" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="-VIN" x="-13.97" y="-7.62" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="-VOUT" x="13.97" y="-7.62" drill="1.651" diameter="3.175" shape="octagon"/>
+<pad name="-SENSE" x="13.97" y="-3.81" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="TRIM" x="13.97" y="0" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="+SENSE" x="13.97" y="3.81" drill="1.143" diameter="2.54" shape="octagon"/>
+<pad name="+VOUT" x="13.97" y="7.62" drill="1.651" diameter="3.175" shape="octagon"/>
+<wire x1="-16.51" y1="11.43" x2="16.51" y2="11.43" width="0.127" layer="21"/>
+<wire x1="16.51" y1="11.43" x2="16.51" y2="-11.43" width="0.127" layer="21"/>
+<wire x1="16.51" y1="-11.43" x2="-16.51" y2="-11.43" width="0.127" layer="21"/>
+<wire x1="-16.51" y1="-11.43" x2="-16.51" y2="11.43" width="0.127" layer="21"/>
+<text x="0" y="2.54" size="1.27" layer="25" align="center">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.27" layer="27" align="center">&gt;VALUE</text>
+</package>
+<package name="CIN_CAP_TANT">
+<smd name="CATHODE" x="0" y="-2.921" dx="6.2992" dy="2.286" layer="1"/>
+<smd name="ANODE" x="0" y="2.921" dx="6.2992" dy="2.286" layer="1"/>
+<wire x1="-2.54" y1="1.27" x2="2.54" y2="1.27" width="0.127" layer="21"/>
+<wire x1="2.54" y1="1.27" x2="2.54" y2="-1.27" width="0.127" layer="21"/>
+<wire x1="2.54" y1="-1.27" x2="-2.54" y2="-1.27" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="-1.27" x2="-2.54" y2="1.27" width="0.127" layer="21"/>
+<wire x1="4.445" y1="3.81" x2="4.445" y2="2.54" width="0.127" layer="21"/>
+<wire x1="3.81" y1="3.175" x2="5.08" y2="3.175" width="0.127" layer="21"/>
+<text x="5.08" y="-1.27" size="1.27" layer="27" rot="R90" align="center">&gt;VALUE</text>
+<text x="-5.08" y="0" size="1.27" layer="25" rot="R90" align="center">&gt;NAME</text>
+</package>
+<package name="CIN_CAP_TANT_KEMET">
+<smd name="CATHODE" x="0" y="-3.11911875" dx="2.3876" dy="2.4384" layer="1"/>
+<smd name="ANODE" x="0" y="3.11911875" dx="2.3876" dy="2.4384" layer="1"/>
+<wire x1="-2.54" y1="5.08" x2="2.54" y2="5.08" width="0.127" layer="21"/>
+<wire x1="2.54" y1="5.08" x2="2.54" y2="-5.08" width="0.127" layer="25"/>
+<wire x1="2.54" y1="-5.08" x2="-2.54" y2="-5.08" width="0.127" layer="25"/>
+<wire x1="-2.54" y1="-5.08" x2="-2.54" y2="5.08" width="0.127" layer="25"/>
+<wire x1="3.81" y1="4.445" x2="3.81" y2="3.175" width="0.127" layer="25"/>
+<wire x1="3.175" y1="3.81" x2="4.445" y2="3.81" width="0.127" layer="25"/>
+<text x="3.81" y="0" size="1.27" layer="27" rot="R90" align="center">&gt;VALUE</text>
+<text x="-3.81" y="0" size="1.27" layer="25" rot="R90" align="center">&gt;NAME</text>
+</package>
+<package name="CIN_CAP_ELEC">
+<smd name="CATHODE" x="0" y="-10.033" dx="1.27" dy="3.81" layer="1"/>
+<smd name="ANODE" x="0" y="10.033" dx="1.27" dy="3.81" layer="1"/>
+<wire x1="-9.4996" y1="9.4996" x2="9.4996" y2="9.4996" width="0.127" layer="21"/>
+<wire x1="9.4996" y1="9.4996" x2="9.4996" y2="-9.4996" width="0.127" layer="21"/>
+<wire x1="9.4996" y1="-9.4996" x2="-9.4996" y2="-9.4996" width="0.127" layer="21"/>
+<wire x1="-9.4996" y1="-9.4996" x2="-9.4996" y2="9.4996" width="0.127" layer="21"/>
+<wire x1="1.905" y1="3.175" x2="1.905" y2="1.905" width="0.127" layer="21"/>
+<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.127" layer="21"/>
+<text x="5.08" y="0" size="1.27" layer="27" rot="R270" align="center">&gt;VALUE</text>
+<text x="-5.08" y="0" size="1.27" layer="25" rot="R90" align="center">&gt;NAME</text>
+</package>
+<package name="STACKED_CAP">
+<smd name="P$1" x="0" y="-2.9972" dx="5.0038" dy="1.524" layer="1"/>
+<smd name="P$2" x="0" y="2.9972" dx="5.0038" dy="1.524" layer="1"/>
+<wire x1="-3.175" y1="4.445" x2="3.175" y2="4.445" width="0.127" layer="21"/>
+<wire x1="3.175" y1="4.445" x2="3.175" y2="-4.445" width="0.127" layer="21"/>
+<wire x1="3.175" y1="-4.445" x2="-3.175" y2="-4.445" width="0.127" layer="21"/>
+<wire x1="-3.175" y1="-4.445" x2="-3.175" y2="4.445" width="0.127" layer="21"/>
+</package>
+<package name="CAP_THROUGH">
+<pad name="GND" x="-2.4892" y="0" drill="0.7" diameter="1.6764" shape="square"/>
+<pad name="P$2" x="2.4892" y="0" drill="0.7" diameter="1.6764" shape="square"/>
+<circle x="0" y="0" radius="6.35" width="0.127" layer="21"/>
+</package>
+</packages>
+<symbols>
+<symbol name="DRQ-12/50">
+<pin name="+VIN" x="-13.97" y="5.08" visible="pin" length="middle"/>
+<pin name="ON/OFF" x="-13.97" y="0" visible="pin" length="middle"/>
+<pin name="-VIN" x="-13.97" y="-5.08" visible="pin" length="middle"/>
+<pin name="-VOUT" x="13.97" y="-5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="+VOUT" x="13.97" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="+S" x="-11.43" y="20.32" visible="pin" length="short" direction="in"/>
+<pin name="-S" x="11.43" y="20.32" visible="pin" length="short" direction="in" rot="R180"/>
+<pin name="SA0" x="-11.43" y="17.78" visible="pin" length="short" direction="in"/>
+<pin name="SA1" x="11.43" y="17.78" visible="pin" length="short" direction="in" rot="R180"/>
+<pin name="SCL" x="-11.43" y="15.24" visible="pin" length="short" direction="in"/>
+<pin name="SDA" x="11.43" y="15.24" visible="pin" length="short" direction="in" rot="R180"/>
+<pin name="PG" x="-11.43" y="12.7" visible="pin" length="short" direction="in"/>
+<pin name="DGND" x="11.43" y="12.7" visible="pin" length="short" direction="in" rot="R180"/>
+<pin name="SMBALERT" x="-16.51" y="10.16" visible="pin" length="short" direction="in"/>
+<pin name="ON/OFF2" x="16.51" y="10.16" visible="pin" length="short" direction="in" rot="R180"/>
+<wire x1="8.89" y1="7.62" x2="8.89" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="8.89" y1="-7.62" x2="-8.89" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-8.89" y1="-7.62" x2="-8.89" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-8.89" y1="22.86" x2="8.89" y2="22.86" width="0.254" layer="94"/>
+<wire x1="8.89" y1="22.86" x2="8.89" y2="7.62" width="0.254" layer="94"/>
+<wire x1="8.89" y1="7.62" x2="-8.89" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-8.89" y1="7.62" x2="-8.89" y2="22.86" width="0.254" layer="94"/>
+<text x="0" y="25.4" size="1.27" layer="95" align="center">&gt;NAME</text>
+<text x="0" y="-10.16" size="1.27" layer="96" align="center">&gt;VALUE</text>
+</symbol>
+<symbol name="UQQ-15/7">
+<pin name="+VIN" x="-15.24" y="5.08" length="middle" direction="in"/>
+<pin name="ON/OFF" x="-15.24" y="0" length="middle" direction="in"/>
+<pin name="-VIN" x="-15.24" y="-5.08" length="middle" direction="in"/>
+<wire x1="-10.16" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="7.62" x2="10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-7.62" x2="-10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<pin name="-VOUT" x="15.24" y="-5.08" length="middle" direction="in" rot="R180"/>
+<pin name="-SENSE" x="15.24" y="-2.54" length="middle" direction="in" rot="R180"/>
+<pin name="TRIM" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
+<pin name="+SENSE" x="15.24" y="2.54" length="middle" direction="in" rot="R180"/>
+<pin name="+VOUT" x="15.24" y="5.08" length="middle" direction="in" rot="R180"/>
+<text x="0" y="10.16" size="1.27" layer="95" align="center">&gt;NAME</text>
+<text x="0" y="-10.16" size="1.27" layer="96" align="center">&gt;VALUE</text>
+</symbol>
+<symbol name="ALD12A48">
+<pin name="+VIN" x="-15.24" y="5.08" length="middle" direction="in"/>
+<pin name="ENABLE" x="-15.24" y="0" length="middle" direction="in"/>
+<pin name="-VIN" x="-15.24" y="-5.08" length="middle" direction="in"/>
+<pin name="-VOUT" x="15.24" y="-5.08" length="middle" direction="in" rot="R180"/>
+<pin name="-SENSE" x="15.24" y="-2.54" length="middle" direction="in" rot="R180"/>
+<pin name="TRIM" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
+<pin name="+SENSE" x="15.24" y="2.54" length="middle" direction="in" rot="R180"/>
+<pin name="+VOUT" x="15.24" y="5.08" length="middle" direction="in" rot="R180"/>
+<wire x1="-10.16" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="7.62" x2="10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-7.62" x2="-10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<text x="0" y="10.16" size="1.27" layer="95" align="center">&gt;NAME</text>
+<text x="0" y="-10.16" size="1.27" layer="96" align="center">&gt;VALUE</text>
+</symbol>
+<symbol name="CIN_CAP_TANT">
+<pin name="ANODE" x="0" y="5.08" visible="off" length="point"/>
+<pin name="CATHODE" x="0" y="-5.08" visible="off" length="point"/>
+<wire x1="0" y1="5.08" x2="0" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="2.54" x2="5.08" y2="2.54" width="0.254" layer="94"/>
+<wire x1="0" y1="-5.08" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-1.27" x2="5.08" y2="-1.27" width="0.254" layer="94" curve="-64.342434"/>
+<wire x1="-3.81" y1="4.826" x2="-3.81" y2="3.302" width="0.254" layer="94"/>
+<wire x1="-4.572" y1="4.064" x2="-3.048" y2="4.064" width="0.254" layer="94"/>
+<text x="0" y="1.27" size="1.27" layer="96" align="center">&gt;VALUE</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="DRQ-12/50">
+<gates>
+<gate name="G$1" symbol="DRQ-12/50" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="DRQ-12/50">
+<connects>
+<connect gate="G$1" pin="+S" pad="6"/>
+<connect gate="G$1" pin="+VIN" pad="1"/>
+<connect gate="G$1" pin="+VOUT" pad="16"/>
+<connect gate="G$1" pin="-S" pad="7"/>
+<connect gate="G$1" pin="-VIN" pad="4"/>
+<connect gate="G$1" pin="-VOUT" pad="5"/>
+<connect gate="G$1" pin="DGND" pad="13"/>
+<connect gate="G$1" pin="ON/OFF" pad="2"/>
+<connect gate="G$1" pin="ON/OFF2" pad="15"/>
+<connect gate="G$1" pin="PG" pad="12"/>
+<connect gate="G$1" pin="SA0" pad="8"/>
+<connect gate="G$1" pin="SA1" pad="9"/>
+<connect gate="G$1" pin="SCL" pad="10"/>
+<connect gate="G$1" pin="SDA" pad="11"/>
+<connect gate="G$1" pin="SMBALERT" pad="14"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="UQQ-15/7">
+<gates>
+<gate name="G$1" symbol="UQQ-15/7" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="UQQ-15/7">
+<connects>
+<connect gate="G$1" pin="+SENSE" pad="+SENSE"/>
+<connect gate="G$1" pin="+VIN" pad="+VIN"/>
+<connect gate="G$1" pin="+VOUT" pad="+VOUT"/>
+<connect gate="G$1" pin="-SENSE" pad="-SENSE"/>
+<connect gate="G$1" pin="-VIN" pad="-VIN"/>
+<connect gate="G$1" pin="-VOUT" pad="-VOUT"/>
+<connect gate="G$1" pin="ON/OFF" pad="ON/OFF"/>
+<connect gate="G$1" pin="TRIM" pad="TRIM"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="ALD12A48">
+<gates>
+<gate name="G$1" symbol="ALD12A48" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="ALD12A48">
+<connects>
+<connect gate="G$1" pin="+SENSE" pad="+SENSE"/>
+<connect gate="G$1" pin="+VIN" pad="+VIN"/>
+<connect gate="G$1" pin="+VOUT" pad="+VOUT"/>
+<connect gate="G$1" pin="-SENSE" pad="-SENSE"/>
+<connect gate="G$1" pin="-VIN" pad="-VIN"/>
+<connect gate="G$1" pin="-VOUT" pad="-VOUT"/>
+<connect gate="G$1" pin="ENABLE" pad="ENABLE"/>
+<connect gate="G$1" pin="TRIM" pad="TRIM"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CIN_CAP_TANT">
+<gates>
+<gate name="G$1" symbol="CIN_CAP_TANT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="CIN_CAP_TANT">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="ANODE"/>
+<connect gate="G$1" pin="CATHODE" pad="CATHODE"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="COUT_CAP_TANT">
+<gates>
+<gate name="G$1" symbol="CIN_CAP_TANT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="CIN_CAP_TANT_KEMET">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="ANODE"/>
+<connect gate="G$1" pin="CATHODE" pad="CATHODE"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CIN_CAP_ELEC">
+<gates>
+<gate name="G$1" symbol="CIN_CAP_TANT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="CIN_CAP_ELEC">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="ANODE"/>
+<connect gate="G$1" pin="CATHODE" pad="CATHODE"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CAP_CER_STACKED">
+<gates>
+<gate name="G$1" symbol="CIN_CAP_TANT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="STACKED_CAP">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="P$1"/>
+<connect gate="G$1" pin="CATHODE" pad="P$2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CAP_THROUGH">
+<gates>
+<gate name="G$1" symbol="CIN_CAP_TANT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="CAP_THROUGH">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="P$2"/>
+<connect gate="G$1" pin="CATHODE" pad="GND"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
+</drawing>
+</eagle>
