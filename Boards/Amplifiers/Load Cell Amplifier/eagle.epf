@@ -1,0 +1,51 @@
+[Eagle]
+Version="07 06 00"
+Platform="Windows"
+Serial="62191E841E-LSR-WLM-1EL"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/Texas Instruments/Texas Instruments/Texas Instruments_By_element14_Batch_1.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/LilyPad-Wearables.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Aesthetics.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Batteries.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Boards.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Capacitors.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Clocks.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Coils.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Connectors.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-DiscreteSemi.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Displays.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Electromechanical.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Fuses.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-GPS.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Hardware.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Amplifiers.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Comms.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Conversion.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Logic.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Memory.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Microcontroller.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Power.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-IC-Special-Function.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Jumpers.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-LED.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-PowerSymbols.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-RF.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Resistors.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Retired.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Sensors.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/SparkFun-Switches.lbr"
+UsedLibrary="C:/Users/shriya/Documents/eagle/libraries/SparkFun-Eagle-Libraries-master/SparkFun-Eagle-Libraries-master/User-Submitted.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="0 0 1919 1136"
+State=3
+Number=0
+
+[Desktop]
+Screen="3840 1200"
+Window="Win_1"
