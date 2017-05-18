@@ -1,0 +1,170 @@
+// slug.c
+// Runs on TM4C123 with Tiva shield version 2.0
+// The Board Support package is an abstraction layer forming a bridge between the low level and the high level softwrae.
+// This file contains function prototypes for the software interface to the Tiva Shield
+
+// Shriya Shah
+// May 18, 2017
+
+//  J1   J3               J4   J2
+// [ 1] [21]             [40] [20]
+// [ 2] [22]             [39] [19]
+// [ 3] [23]             [38] [18]
+// [ 4] [24]             [37] [17]
+// [ 5] [25]             [36] [16]
+// [ 6] [26]             [35] [15]
+// [ 7] [27]             [34] [14]
+// [ 8] [28]             [33] [13]
+// [ 9] [29]             [32] [12]
+// [10] [30]             [31] [11]
+
+
+// Connected pins and Peripherals
+// power and reset
+// J1.1 +3.3V (power)
+// J3.21 +5V (power)
+// J3.22 GND (ground)
+// J2.20 GND (ground)
+// J2.16 nothing (reset)
+//--------------------------------------------------
+// Motors
+//--------------------------------------------------
+// Load Cells
+//--------------------------------------------------
+// Thermocouple
+//--------------------------------------------------
+// Current Sensor
+//--------------------------------------------------
+// Absolute Encoders
+//--------------------------------------------------
+// Display LEDS
+//--------------------------------------------------
+// unconnected pins
+
+#include "slug.h"
+#include <stdint.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+
+static uint32_t ClockFrequency = 16000000; // Cycles/second
+
+// ---------------Button1_Init----------------------
+//Initializes the GPIO pin for the button PF0 (J2.17) as input.
+//Input: none
+//Output: none
+uint8_t Button1_Init(void){
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)){
+       } //Enable Peripheral
+
+    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);
+    GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_4, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+}
+
+//----------------Button1_Input---------------------
+// Read and return the immediate status of the button1.
+// Button debouncing not considered
+// Input: none
+// Output: Button not pressed - non zero
+//         Button pressed - zero
+// Call Button1_init() first
+uint8_t Button1_Input(void){
+    if(((GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_4))&GPIO_PIN_4) == 0) //Button Pressed
+        return 0;
+    else
+        return 1;
+}
+
+// ----------------RGBled_Init-----------------------
+// Initializes the RGB LED on PF1, PF2 and PF3
+void RGBled_Init(uint8_t red, uint8_t green, uint8_t blue){
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)){
+       } // Enable and wait for the port to be ready for access
+
+    //Configure port for LED operation
+    if(red>0){
+        GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1);
+    }if(blue>0){
+        GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
+    }if(green>0){
+        GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
+    }
+}
+
+// ----------------RGBled_Set-----------------------
+// Sets the RGB LED on PF1, PF2 and PF3
+// Input: non zero input sets the LEDs
+// Output: none
+void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue){
+    if(red>0){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIO_PIN_1);
+    }
+    if(blue>0){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIO_PIN_2);
+    }
+    if(green>0){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, ~GPIO_PIN_3);
+    }
+}
+
+// ----------------RGBled_Toggle-----------------------
+// Toggles the RGB LED on PF1, PF2 and PF3
+// Input: non zero input toggles the LEDs
+//         red is toggle for red
+//         blue is toggle for blue
+//         green is toggle for green
+// Output: none
+void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue){
+    if(red){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1)^GPIO_PIN_1);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIO_PIN_1);
+    }
+    if(green){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_3)^GPIO_PIN_3);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, ~GPIO_PIN_3);
+    }
+    if(blue){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2)^GPIO_PIN_2);
+    }else{
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIO_PIN_2);
+    }
+}
+
+//------------------Delay_cycle----------------------------
+//Delays the execution by approximately the given number of cycles
+// It is not accurate
+//Input: delay cycles
+void Delay_cycle(uint32_t delay){
+    SysCtlDelay(delay);
+}
+
+//------------------Clock_set_fastest---------------------------
+//Configure system clock to run at fastest settings
+//Input: none
+//Output: None
+void Clock_set_fastest(void){
+    SysCtlClockSet(SYSCTL_SYSDIV_4|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
+                        SYSCTL_OSC_MAIN);  // Setup system clock at 50MHz from PLL with Crystal
+}
+
+//------------------Clock_get_frequency---------------------------
+//Get Current clock frequency
+//Input: none
+//Output: Frequency
+uint32_t Clock_get_frequency(void){
+    return SysCtlClockGet();
+}

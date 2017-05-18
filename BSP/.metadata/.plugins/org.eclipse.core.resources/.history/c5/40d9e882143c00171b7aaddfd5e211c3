@@ -1,0 +1,14 @@
+#include <stdint.h>
+#include "slug.h"
+
+uint8_t Red = 0, Green = 0, Blue = 0;
+
+int main(void){
+    RGBled_Init(1, 1, 1); // Initialize all
+
+    while(1){
+        RGBled_Set(1, 0, 0);
+        RGBled_Set(0, 1, 0);
+    }
+}
+

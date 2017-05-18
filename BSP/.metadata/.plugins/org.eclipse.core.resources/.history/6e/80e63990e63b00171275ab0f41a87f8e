@@ -1,0 +1,13 @@
+#include <stdint.h>
+#include "BSP.h"
+
+uint8_t Red = 0, Green = 0, Blue = 0;
+
+int main(void){
+    RGBled_Init(1, 0, 0); // Initilize Red
+
+    while(1){
+        RGBled_Set(1, 0, 0);
+    }
+}
+
