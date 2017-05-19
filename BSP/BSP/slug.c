@@ -156,13 +156,17 @@ void Delay_cycle(uint32_t delay){
     SysCtlDelay(delay);
 }
 
+void delayMS(int ms) {
+    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
+}
+
 //------------------Clock_set_fastest---------------------------
 //Configure system clock to run at fastest settings
 //Input: none
 //Output: None
 void Clock_set_fastest(void){
-    SysCtlClockSet(SYSCTL_SYSDIV_4|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
-                        SYSCTL_OSC_MAIN);  // Setup system clock at 50MHz from PLL with Crystal
+    SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
+                        SYSCTL_OSC_MAIN);  // Setup system clock at 40MHz from PLL with Crystal
 }
 
 //------------------Clock_get_frequency---------------------------
@@ -177,14 +181,14 @@ uint32_t Clock_get_frequency(void){
 //Initialize the Motor
 //Input: None
 //Output: None
-void enableDirectionPin(int MotorDirection){
+void enableDirectionPin(){
        SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
        while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
 
-       GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, MotorDirection);
+       GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, MotorDirectionPin);
 }
 
-void enablePWM(int period){
+void enablePWMPin(int period){
         /* PWM clock: systemClock/2 = 20 MHZ */
        SysCtlPWMClockSet(SYSCTL_PWMDIV_2);
 
@@ -192,7 +196,7 @@ void enablePWM(int period){
         SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM1); // Module 1 for PF1
 
         GPIOPinConfigure(GPIO_PF1_M1PWM5);
-        GPIOPinTypePWM(GPIO_PORTF_BASE,GPIO_PIN_1);
+        GPIOPinTypePWM(GPIO_PORTF_BASE,MotorPWMPin);
         PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
         PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, period);
 
@@ -202,26 +206,50 @@ void enablePWM(int period){
         // Turn on the Output pins
         PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
 }
-uint32_t Motor_Init(uint32_t frequency){
-    const int MotorPWM = GPIO_PIN_1;
-    const int MotorDirection = GPIO_PIN_7;
 
-    uint32_t period = SysCtlPWMClockGet()/frequency;
+void setDirection(){
+    GPIOPinWrite(GPIO_PORTB_BASE, MotorDirectionPin, MotorDirectionPin);
+}
+
+void clearDirection(){
+    GPIOPinWrite(GPIO_PORTB_BASE, MotorDirectionPin, ~MotorDirectionPin);
+}
+
+void enableMotor(){
+    setDirection();
+
+    // Turn off the Output pins
+     PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
+}
+
+void disableMotor(){
+    clearDirection();
+
+    // Turn off the Output pins
+     PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, false);
+}
+
+void Motor_Init(uint32_t period){
+
+    //uint32_t period = SysCtlPWMClockGet()/frequency;
 
     /*Enable Peripheral Direction pin*/
-       enableDirectionPin(MotorDirection);
+       enableDirectionPin();
 
     /* Enable PWM*/
-       enablePWM(period);
+       enablePWMPin(period);
 
-   return period;
+  // return period;
 }
+
 
 //------------------Motor_SetDuty()---------------------------
 //Set Duty cycle for the motor
 //Input: Target Duty Cycle
 //Output: None
-void Motor_SetDuty(uint16_t duty, uint32_t period){
-    uint16_t dutyCycle = duty*0.01*period;
+void Motor_SetDuty(float duty, uint32_t period){
+    uint16_t dutyCycle;
+    dutyCycle = duty*period;
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycle);
 }
+

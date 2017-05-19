@@ -17,4 +17,6 @@
 	</section>
 	<section name="com.ti.ccstudio.project.ui.internal.preferences.DynamicPreferencePageManager">
 	</section>
+	<section name="CCS.ImportCCSProjectWizard">
+	</section>
 </section>

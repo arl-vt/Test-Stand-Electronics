@@ -42,6 +42,9 @@
 // unconnected pins
 
 #include <stdint.h>
+
+#define MotorPWMPin GPIO_PIN_1
+#define MotorDirectionPin GPIO_PIN_7
 // ---------------Button1_Init----------------------
 //Initializes the GPIO pin for the button PF0 (J2.17) as input.
 //Input: none
@@ -98,10 +101,14 @@ uint32_t Clock_get_frequency(void);
 //Initialize the Motor
 //Input: frequency of operation (Eg: 10 (KHZ))
 //Output: Period
-uint32_t Motor_Init(uint32_t frequency);
+void Motor_Init(uint32_t period);
 
 //------------------Motor_SetDuty()---------------------------
 //Set Duty cycle for the motor
 //Input: Target Duty Cycle (in percent - 0:100)
 //Output: None
-void Motor_SetDuty(uint16_t duty, uint32_t period);
+void Motor_SetDuty(float duty, uint32_t period);
+
+void enableMotor(void);
+
+void disableMotor(void);
