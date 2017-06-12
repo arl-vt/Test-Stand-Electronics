@@ -1,0 +1,113 @@
+#include <stdint.h>
+#include "slug.h"
+
+uint8_t Red = 0, Green = 0, Blue = 0;
+
+void testGPIO(void);
+void testGPIOTimers(void);
+void testTempSensor(void);
+
+int main(void){
+
+    Clock_set_fastest();
+
+    // 1. test GPIO - Input and Output
+    //testGPIO();
+
+    // 2. Test Timer and Interrupts
+    testGPIOTimers();
+
+    // 3. Test Temperature Sensor
+    testTempSensor();
+
+
+}
+
+//----------------------------------------------------------------------------
+// Test Turn ON/OFF behavior
+// Button press
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testGPIO(void){
+    RGBled_Init(1, 1, 1); // Initialize all
+    Button1_Init();
+
+    while(1){
+                // Test RGB LEDS
+//                RGBled_Set(1, 1, 0);
+//                Delay_cycle(2000000);
+//                RGBled_Set(1, 0, 0);
+//                Delay_cycle(2000000);
+
+
+                // Test Toggle Behavior
+//                RGBled_Toggle(1, 0, 0);
+//                Delay_cycle(2000000);
+//                RGBled_Toggle(0, 1, 0);
+//                Delay_cycle(2000000);
+
+
+                //Test Button input
+//                if(Button1_Input()==0){
+//                    RGBled_Set(0, 1, 0); //Set green on Press
+//                }else{
+//                    RGBled_Set(0, 0, 1); // Set Blue on Release
+//                }
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Timer module and Interrupt generation
+// Toggle LED at 10 HZ
+//----------------------------------------------------------------------------
+void testGPIOTimers(){
+    int freq = 10; //10Hz frequency of toggling
+    RedledTimer_Init(freq);
+    while(1){
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Temperature sensor on ADC0
+// On Board Temp Sensor
+//----------------------------------------------------------------------------
+void testTempSensor(){
+    //uint32_t TempSensorValue[4];
+    volatile uint32_t TempAvg;
+    volatile uint32_t TempValueC;
+    volatile uint32_t TempValueF;
+
+    tempSensor_init();
+
+    while(1){
+        TempAvg = tempSensor_read();
+        //TempAvg = (TempSensorValue[0] + TempSensorValue[1] + TempSensorValue[2] + TempSensorValue[3] + 2)/4;
+        TempValueC = (1475 - ((2475*TempAvg))/4096)/10;
+        TempValueF = ((TempValueC*9)+160)/5;
+    }
+}
+
+//uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
+//Motor_Init(period); // Initialize with 10KHZ
+
+// Test Timer blink]
+//ledTimer_Init();
+
+//Initialize serial monitor
+//SerialMonitor_Init();
+
+
+
+//while(1){
+
+
+    //Test Motor
+    /*enableMotor();
+    Motor_SetDuty(.01, period);
+    delayMS(1000);
+    disableMotor();
+    delayMS(1000);
+    */
+
+
+//}

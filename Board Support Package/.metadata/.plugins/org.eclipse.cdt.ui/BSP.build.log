@@ -1,0 +1,7 @@
+
+**** Build of configuration Debug for project BSP ****
+
+"C:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
+gmake[1]: 'BSP.out' is up to date.
+
+**** Build Finished ****

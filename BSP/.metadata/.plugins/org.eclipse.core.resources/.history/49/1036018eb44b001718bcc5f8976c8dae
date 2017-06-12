@@ -1,0 +1,4 @@
+// Loop between Red and Green LED and turn on Blue LED on
+// button press
+
+RGBled_Init(0, 1, 1); // Initialize all

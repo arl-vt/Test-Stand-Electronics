@@ -1,2 +1,2 @@
-DEFAULT_CCS_TARGET_CONFIGURATION=D\:\\TREC-EXO\\Test-Stand-Electronics\\BSP\\BSP\\targetConfigs\\Tiva TM4C123GH6PM.ccxml
+DEFAULT_CCS_TARGET_CONFIGURATION=D\:\\TREC-EXO\\Test-Stand-Electronics\\Board Support Package\\BSP\\targetConfigs\\Tiva TM4C123GH6PM.ccxml
 eclipse.preferences.version=1
