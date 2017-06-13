@@ -224,6 +224,24 @@ void Motor_Init(uint32_t period);
 //Output: None
 void Motor_SetDuty(float duty, uint32_t period);
 
+//------------------setMotorPWMFreq()---------------------------
+//Set the global variable period
+//Input: period
+//Output: None
+void setMotorPWMFreq(uint32_t period);
+
+//------------------motorSendCommand()---------------------------
+//Sends the final commands to the motor driver
+//Input: duty cycle, direction
+//Output: None
+void motorSendCommand(float duty, int direction);
+
+//------------------checkLimits()---------------------------
+//Check duty cycle limit
+//Input: Duty Cycle
+//Output: None
+void checkLimits(float duty);
+
 //------------------enableMotor()---------------------------
 //Enables the motor
 //Input: None
@@ -236,11 +254,29 @@ void enableMotor(void);
 //Output: None
 void disableMotor(void);
 
+//------------------setglobals4Motor()---------------------------
+//Set global variable duty and direction
+//Input: Duty cycle, Direction
+//Output: None
+void setglobals4Motor(float duty, int direction);
+
+//------------------getglobalduty()---------------------------
+//Get global variable duty and direction
+//Input: None
+//Output: Duty cycle
+float getglobalduty(void);
+
+//------------------getglobaldirection()---------------------------
+//Get global variable duty and direction
+//Input: None
+//Output: Direction
+int getglobaldirection(void);
+
 //------------------Controller_Init()---------------------------
 //Initializes a timer routine for the controller
 //Input: None
 //Output: None
-void Controller_Init(void);
+void Controller_Init(uint32_t Controllerfreq);
 
 //------------------ControllerEnable()---------------------------
 //Enable Timer 1A
@@ -255,11 +291,17 @@ void ControllerEnable(void);
 uint32_t getControllerFlag(void);
 
 
-//------------------setRefForce()---------------------------
+//------------------setGoalForce()---------------------------
 //Set the global variable RefForce
 //Input: Ref Force
 //Output: None
-void setRefForce(uint32_t);
+void setGoalForce(uint32_t);
+
+//------------------getGoalForce()---------------------------
+//Get the global variable RefForce
+//Input: None
+//Output: Goal Force
+uint32_t getGoalForce(void);
 
 //------------------getRefForce()---------------------------
 //Get the global variable RefForce

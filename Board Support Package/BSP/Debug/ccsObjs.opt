@@ -1,1 +1,1 @@
-"./ForceControlTest.obj" "./slug.obj" "./slugTest.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uartstdio.obj" "../tm4c123gh6pm.cmd" -llibc.a -l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" 
+"./ForceControlTest.obj" "./slug.obj" "./slugTest.obj" "./testDataCollection.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uartstdio.obj" "../tm4c123gh6pm.cmd" -llibc.a -l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" 

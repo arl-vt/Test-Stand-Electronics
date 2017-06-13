@@ -13,7 +13,7 @@ void testloadCellAmplifier(void);
 void testMotor(void);
 void testController(void);
 
-int main2(void){
+int main3(void){
 
     Clock_set_fastest();
 
@@ -28,13 +28,13 @@ int main2(void){
 
     // 4. Test UART functionality
     //testSerialMonitor();
-    //testSerialMonitor2();
+    testSerialMonitor2();
 
     // 5. Test Load Cell Amplifier
     //testloadCellAmplifier();
 
     // 6. Test DC Motor
-    testMotor();
+    //testMotor();
 
     //7. Test Controller
     //testController();
@@ -174,14 +174,13 @@ void testMotor(){
 }
 
 void testController(){
-    uint32_t flag;
     initConsole();
     //uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
     //Motor_Init(period); // Initialize with 10KHZ
 
     RGBled_Init(1,1,1);
-
-    Controller_Init();
+    uint32_t controllerFreq = 10000; //10kHZ
+    Controller_Init(controllerFreq);
     EnableInterrupts();
     ControllerEnable();
 

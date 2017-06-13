@@ -1,0 +1,84 @@
+-----TI-REX started at Mon Jun 12 2017 23:04:58 GMT-0400 (Eastern Daylight Time)
+Tue, 13 Jun 2017 03:05:17 GMT connect deprecated multipart: use parser (multiparty, busboy, formidable) npm module instead at node_modules\connect\lib\middleware\bodyParser.js:56:20
+Tue, 13 Jun 2017 03:05:17 GMT connect deprecated limit: Restrict request size at location of read at node_modules\connect\lib\middleware\multipart.js:86:15
+Tue, 13 Jun 2017 03:05:17 GMT connect deprecated methodOverride: use method-override npm module instead at app.js:555:21
+rex-content"
+]
+2017-06-13T03:05:16.474Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\vars.js:165:12:Function.Vars.createDirs() [
+    "db dir: C:\\Users\\shriya\\ti\\tirex-localserver-3.0.0\\.db"
+]
+2017-06-13T03:05:16.480Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\vars.js:170:12:Function.Vars.createDirs() [
+    "db logs dir: C:\\Users\\shriya\\ti\\tirex-localserver-3.0.0\\.db\\logs"
+]
+2017-06-13T03:05:16.496Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\vars.js:175:12:Function.Vars.createDirs() [
+    "sitemap dir: C:\\Users\\shriya\\ti\\tirex-localserver-3.0.0\\.db\\sitemap"
+]
+2017-06-13T03:05:16.496Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\vars.js:180:12:Function.Vars.createDirs() [
+    "downloads dir: C:\\Users\\shriya\\ti\\tirex-localserver-3.0.0\\.downloads"
+]
+2017-06-13T03:05:16.511Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\vars.js:185:12:Function.Vars.createDirs() [
+    "user config dir: C:\\Users\\shriya\\ti\\tirex-localserver-3.0.0"
+]
+2017-06-13T03:05:16.624Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:49:12:RexDBSplit.use() [
+    "DB: use() called with[]"
+]
+2017-06-13T03:05:16.656Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:83:16:() [
+    "DB: status {}"
+]
+2017-06-13T03:05:18.621Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\localserver.js:50:12:logInfo() [
+    "localserver",
+    "Starting up local server ..."
+]
+2017-06-13T03:05:18.624Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\localserver.js:50:12:logInfo() [
+    "localserver",
+    "CCS host: http://localhost:50197/"
+]
+2017-06-13T03:05:18.777Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\localserver.js:50:12:logInfo() [
+    "localserver",
+    "Connecting to remote server host: https://dev.ti.com/tirex"
+]
+2017-06-13T03:05:19.034Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\app.js:2317:16:Server.<anonymous>() [
+    "Express server listening on port 50221"
+]
+2017-06-13T03:05:20.635Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\localserver.js:50:12:logInfo() [
+    "localserver",
+    "Cannot connect to remote server host: https://dev.ti.com/tirex"
+]
+2017-06-13T03:05:20.635Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\lib\localserver.js:50:12:logInfo() [
+    "localserver",
+    "Reason: This version of Resource Explorer is no longer supported. Please see update instructions here: http://processors.wiki.ti.com/index.php/TIREX_Update"
+]
+2017-06-13T03:05:29.578Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:49:12:RexDBSplit.use() [
+    "DB: use() called with[]"
+]
+2017-06-13T03:05:29.579Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:83:16:() [
+    "DB: status {}"
+]
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+2017-06-13T03:05:34.018Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:49:12:RexDBSplit.use() [
+    "DB: use() called with[]"
+]
+2017-06-13T03:05:34.020Z INFO DAEMON tirex C:\ti\ccsv7\tirex\ti-rex-core\rexdb\lib\rexdb-split.js:83:16:() [
+    "DB: status {}"
+]
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.
+User configuration saved successfully.

@@ -83,13 +83,13 @@
 "C:/ti/TivaWare_C_Series-2.1.4.178/inc/hw_ints.h", line 472: warning #48-D: incompatible redefinition of macro "INT_WTIMER4B" (declared at line 118 of "C:/ti/TivaWare_C_Series-2.1.4.178/inc/tm4c123gh6pm.h")
 "C:/ti/TivaWare_C_Series-2.1.4.178/inc/hw_ints.h", line 473: warning #48-D: incompatible redefinition of macro "INT_WTIMER5A" (declared at line 119 of "C:/ti/TivaWare_C_Series-2.1.4.178/inc/tm4c123gh6pm.h")
 "C:/ti/TivaWare_C_Series-2.1.4.178/inc/hw_ints.h", line 474: warning #48-D: incompatible redefinition of macro "INT_WTIMER5B" (declared at line 120 of "C:/ti/TivaWare_C_Series-2.1.4.178/inc/tm4c123gh6pm.h")
-"../slug.c", line 138: warning #994-D: missing return statement at end of non-void function "Button1_Init"
-"../slug.c", line 558: warning #70-D: integer conversion resulted in truncation
+"../slug.c", line 144: warning #994-D: missing return statement at end of non-void function "Button1_Init"
+"../slug.c", line 577: warning #70-D: integer conversion resulted in truncation
 'Finished building: ../slug.c'
 ' '
 'Building target: BSP.out'
 'Invoking: ARM Linker'
-"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"BSP.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="BSP_linkInfo.xml" --rom_model -o "BSP.out" "./ForceControlTest.obj" "./slug.obj" "./slugTest.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uartstdio.obj" "../tm4c123gh6pm.cmd"  -llibc.a -l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" 
+"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"BSP.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="BSP_linkInfo.xml" --rom_model -o "BSP.out" "./ForceControlTest.obj" "./slug.obj" "./slugTest.obj" "./testDataCollection.obj" "./tm4c123gh6pm_startup_ccs.obj" "./uartstdio.obj" "../tm4c123gh6pm.cmd"  -llibc.a -l"C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" 
 <Linking>
 'Finished building target: BSP.out'
 ' '
