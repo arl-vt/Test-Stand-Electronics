@@ -72,36 +72,39 @@
 
 // ****** Constants ******
 // Sample Frequency for load cell triggering
-const int sampleFreq = 1000; //1 KHZ
+const int sampleFreq = 500; //500 Hz
+const int clockFreq = 80000000; //80MHz
+const int PWMclockFreq = 40000000; //80MHz
 
 // ****** Variables ******
-uint16_t samplePeriod;
+uint16_t samplePeriod; //For load cell sampling period calculation
 uint32_t rawTemp[1];
 uint32_t loadCellValue[1];
+
 volatile uint32_t controllerFlag;
+
 uint32_t motorPWMperiod;
+volatile double pwmPeriod;
+volatile double pwmDuty;
 
 // ******* PID Control *********************
-//const int goalPos = 2590;
-uint32_t goalPos;
-volatile int error;
-volatile int last_error = 0;
-volatile int total_error = 0;
-volatile float out;
-volatile float P, D, I;
+double goalPos;
+volatile double error;
+volatile double last_error = 0;
+volatile double total_error = 0;
+volatile double out;
+volatile double P, D, I;
 
 //PID VALUES
-volatile float Kp = .001; //P from PID
-volatile float Ki = 0; //I from PID
-volatile float Kd = 0.001; //D from PID
+volatile double Kp = 40; //P from PID
+volatile double Ki = 0.0; //I from PID
+volatile double Kd = 0.0; //D from PID
 
 // *********Globals******************************
-float globalDutyCycle;
-int globalDirection;
+double globalDutyCycle;
+double globalDirection;
 
-// ----------------ledTimer_Toggle-----------------------
-// Toggle Red LED on PF1 based on Timer interrupt
-void RedledTimer_Toggle();
+uint32_t dummy = 0;
 
 //------------------Clock_set_fastest---------------------------
 //Configure system clock to run at fastest settings
@@ -111,7 +114,7 @@ void RedledTimer_Toggle();
 //Input: none
 //Output: None
 void Clock_set_fastest(void){
-    SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
+    SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
                         SYSCTL_OSC_MAIN);  // Setup system clock at 80MHz from PLL with Crystal
 }
 
@@ -135,7 +138,7 @@ void EnableInterrupts(void){
 //Initializes the GPIO pin for the button PF0 (J2.17) as input.
 //Input: none
 //Output: none
-uint8_t Button1_Init(void){
+void Button1_Init(void){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)){
        } //Enable Peripheral
@@ -248,6 +251,7 @@ void RedledTimer_Init(int period){
     //Enable Timer
     TimerEnable(TIMER0_BASE, TIMER_A);
 }
+
 // ----------------ledTimer_Toggle-----------------------
 // Toggle Red LED on PF1 based on Timer interrupt
 void RedledTimer_Toggle(){
@@ -272,6 +276,7 @@ void RedledTimer_Toggle(){
 //
 //    RedledTimer_Toggle();
 //}
+
 //------------------Delay_cycle----------------------------
 //Delays the execution by approximately the given number of cycles
 // It is not accurate
@@ -559,9 +564,9 @@ void LoadCellIntHandler(void){
 //Initialize the Motor
 //Input: None
 //Output: None
-void Motor_Init(uint32_t period){
+void Motor_Init(uint32_t PWMFreq){
 
-    //uint32_t period = SysCtlPWMClockGet()/frequency;
+    pwmPeriod = PWMclockFreq/PWMFreq;
 
     /*Enable Peripheral Direction pin*/
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
@@ -570,7 +575,7 @@ void Motor_Init(uint32_t period){
     GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_7); //PB7
 
     /* Enable PWM*/
-    /* PWM clock: systemClock/2 = 20 MHZ */
+    /* PWM clock: systemClock/2 = 80/2 MHZ */
     SysCtlPWMClockSet(SYSCTL_PWMDIV_2);
 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF); //PF1
@@ -579,7 +584,7 @@ void Motor_Init(uint32_t period){
     GPIOPinConfigure(GPIO_PF1_M1PWM5);
     GPIOPinTypePWM(GPIO_PORTF_BASE,GPIO_PIN_1);
     PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
-    PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, period);
+    PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, (int)pwmPeriod);
 
     // Enable the PWM generator
     PWMGenEnable(PWM1_BASE, PWM_GEN_2);
@@ -587,25 +592,25 @@ void Motor_Init(uint32_t period){
     // Turn on the Output pins
     PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
 
-    //Set global variable period
-    setMotorPWMFreq(period);
+//    //Set global variable period
+//    setMotorPWMPeriod(pwmPeriod);
 
 }
 
-//------------------setMotorPWMFreq()---------------------------
-//Set the global variable period
-//Input: period
-//Output: None
-void setMotorPWMFreq(uint32_t period){
-    motorPWMperiod = period;
-}
+////------------------setMotorPWMFreq()---------------------------
+////Set the global variable period
+////Input: period
+////Output: None
+//void setMotorPWMPeriod(uint32_t period){
+//    motorPWMperiod = period;
+//}
 
 //------------------getMotorPWMFreq()---------------------------
 //Get the global variable period
 //Input: period
 //Output: None
-uint32_t getMotorPWMFreq(void){
-    return motorPWMperiod;
+double getMotorPWMPeriod(void){
+    return pwmPeriod;
 }
 
 void setDirection(){
@@ -632,36 +637,42 @@ void disableMotor(){
 
 //------------------Motor_SetDuty()---------------------------
 //Set Duty cycle for the motor
-//Input: Target Duty Cycle
+//Input: Target Duty Cycle 0-100 (percent)
 //Output: None
-void Motor_SetDuty(float duty){
-    float dutyCycle;
-    dutyCycle = duty*getMotorPWMFreq();
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycle);
+void Motor_SetDuty(uint32_t dutyCycle){
+    pwmDuty = dutyCycle*((float)getMotorPWMPeriod()/100);
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, pwmDuty);
+}
+
+//------------------convert2PWMDuty()---------------------------
+//Set Duty cycle for the motor
+//Input: Target Duty Cycle (in percent - 0:100)
+//Output: Command to send to PWM
+double convert2PWMDuty(uint32_t dutyCycle){
+    pwmDuty = ((float)dutyCycle/100)*(getMotorPWMPeriod());
+    return pwmDuty;
 }
 //------------------motorSendCommand()---------------------------
 //Sends the final commands to the motor driver
 //Input: duty cycle, direction
 //Output: None
-void motorSendCommand(float duty, int direction){
-    float dutyCycle;
-    dutyCycle = duty*motorPWMperiod;
+void motorSendCommand(uint32_t dutyCycle, int direction){
+    double dutyCycleApplied = convert2PWMDuty(dutyCycle);
+    setglobals4Motor(dutyCycleApplied, direction);
     if (direction >0){
         setDirection();
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycle);
+        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,dutyCycleApplied );
     }else{
         clearDirection();
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycle);
+        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycleApplied);
     }
-
-    setglobals4Motor(duty, direction);
 }
 
 //------------------setglobals4Motor()---------------------------
 //Set global variable duty and direction
 //Input: Duty cycle, Direction
 //Output: None
-void setglobals4Motor(float duty, int direction){
+void setglobals4Motor(double duty, int direction){
     globalDutyCycle = duty;
     globalDirection = direction;
 }
@@ -670,7 +681,7 @@ void setglobals4Motor(float duty, int direction){
 //Get global variable duty and direction
 //Input: None
 //Output: Duty cycle
-float getglobalduty(void){
+double getglobalduty(void){
     return globalDutyCycle;
 }
 
@@ -682,34 +693,19 @@ int getglobaldirection(void){
     return globalDirection;
 }
 
-//------------------checkLimits()---------------------------
-//Check duty cycle limit
-//Input: Duty Cycle
-//Output: None
-void checkLimits(float duty){
-    int direction;
-    if(duty<0){
-        direction = 0;
-        duty = -1*duty;
-    }else{
-        direction = 1;
-    }
-
-    if(duty > 1){
-        duty = 1;
-    }
-
-    motorSendCommand(duty, direction);
-}
-
 //------------------Force control loop -----------------------
 void ControllerIntHandler(void){
     TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 
-    //RedledTimer_Toggle(); //Blue led toggle
+//    //RedledTimer_Toggle(); //Blue led toggle
+//    if(dummy == 0){
+//        RGBled_Set(1,0,0);
+//    }else{
+//        RGBled_Set(0,1,0);
+//    }
+//    dummy = ~dummy;
 
-    error = (goalPos - loadCellValue[0]);
-    //UARTprintf("E: %04u\n", error);
+    error = (getGoalForce() - measuredLoad());
     P = Kp*error;
 
     D = Kd*(error-last_error);
@@ -723,6 +719,7 @@ void ControllerIntHandler(void){
     checkLimits(out);
 
 }
+
 //------------------Controller_Init()---------------------------
 //Initializes a timer routine for the controller
 //Input: None
@@ -743,20 +740,20 @@ void Controller_Init(uint32_t Controllerfreq){
        // TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
 
         // Define period
-        periods = (SysCtlClockGet()/Controllerfreq)/2; //We want 10 Hz toggle frequency therefore the period should be the
-        //system clock / desired toggle freq/2
+        periods = (SysCtlClockGet()/Controllerfreq);
+        //periods = (clockFreq/Controllerfreq);
         TimerLoadSet(TIMER1_BASE, TIMER_A, periods-1);
 
         // register the timer interrupt service routine
         TimerIntRegister(TIMER1_BASE, TIMER_A, *ControllerIntHandler);
 
         // clear rollover interrupt and then enable it
-            TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-            TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+        TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+        TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 
-            IntEnable(INT_TIMER1A);
-
+        IntEnable(INT_TIMER1A);
 }
+
 //------------------ControllerEnable()---------------------------
 //Enable Timer 1A
 //Input: None
@@ -764,6 +761,26 @@ void Controller_Init(uint32_t Controllerfreq){
 void ControllerEnable(){
     //Enable Timer
     TimerEnable(TIMER1_BASE, TIMER_A);
+}
+
+//------------------checkLimits()---------------------------
+//Check duty cycle limit
+//Input: Duty Cycle
+//Output: None
+void checkLimits(double duty){
+    int direction;
+    if(duty<0){
+        direction = 0;
+        duty = -1*duty;
+    }else{
+        direction = 1;
+    }
+
+    if(duty > 1){
+        duty = 1;
+    }
+
+    motorSendCommand(duty, direction);
 }
 
 //------------------getControllerFlag()---------------------------
@@ -779,7 +796,7 @@ uint32_t getControllerFlag(){
 //Set the global variable RefForce
 //Input: Ref Force
 //Output: None
-void setGoalForce(uint32_t ref){
+void setGoalForce(double ref){
     goalPos = ref;
 }
 
@@ -787,15 +804,31 @@ void setGoalForce(uint32_t ref){
 //Get the global variable RefForce
 //Input: Ref Force
 //Output: None
-uint32_t getGoalForce(void){
+double getGoalForce(void){
     return goalPos;
 }
 
-//------------------getRefForce()---------------------------
-//Get the global variable RefForce
+//------------------getKp()---------------------------
+//Gep proportional gain
 //Input: None
-//Output: Ref Force
-uint32_t getRefForce(void){
-    return goalPos;
+//Output: Kp
+double getKp(void){
+    return Kp;
 }
 
+
+//------------------getError()---------------------------
+//Get Error in PID
+//Input: None
+//Output: Error
+double getError(void){
+    return error;
+}
+
+//------------------getPIDoutput()---------------------------
+//Get output in PID
+//Input: None
+//Output: out
+double getPIDoutput(void){
+    return out;
+}

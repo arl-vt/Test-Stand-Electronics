@@ -6,18 +6,19 @@ void testloadCellAmplifier2(void);
 void testMotor2(void);
 void testController2(void);
 
-// Load cell reading 50.9 pound is nominal
+// Load cell reading 45.83 pound is nominal
+// Set Ref 50 pound
 
 int main(void){
 
     // Load Cell reading in pound
-    double loadCellOut;
+    double loadCellOut, error, OutDuty;
 
-    // Motor control variables
-    float dutyCycle;
-    int MotorDirection;
+    //Controller variables
+    double setPointForce = 50;
 
-    bool testMotor = 1;
+    //Motor
+    //static volatile uint32_t dutyCycle = 20;
 
     //Setup system clock , 80MHZ
     Clock_set_fastest();
@@ -26,8 +27,8 @@ int main(void){
     initConsole();
 
     //Motor Initialize @ 10KHZ PWM freq
-    uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
-    Motor_Init(period); // Initialize with 10KHZ
+    uint32_t MotorPwmFreq = 10000; //10KHZ
+    Motor_Init(MotorPwmFreq); // Initialize with 10KHZ
     UARTprintf("\n Motor Initialized! \n");
 
     //Load Cell Initialization
@@ -38,36 +39,30 @@ int main(void){
     RGBled_Init(0,1,1);
 
     //Controller initialize
-   // uint32_t controllerFreq = 10000; //10kHZ
-    //Controller_Init(controllerFreq);
-    //setGoalForce(2600);
-    //ControllerEnable();
-    //UARTprintf("\n Controller Initialized! \n");
+    setGoalForce(setPointForce);
+    uint32_t controllerFreq = 2000; //2 kHZ
+    Controller_Init(controllerFreq);
+    ControllerEnable();
+    UARTprintf("\n Controller Initialized! \n");
 
     //Enable system wide interrupts
     EnableInterrupts();
 
+
     while(1){
         //Measure Load Cell value
-        loadCellOut = measuredLoad();
+        loadCellOut = measuredLoad()*100;
+
+        error = getError()*100;
+        OutDuty = getPIDoutput()*100;
+        //Test Motor
+
 
         //Turn Motor for some time and then reverse it
-        UARTprintf("%04u\n", (uint32_t)(loadCellOut*1000));
+        //UARTprintf("Load:%04d\n", (uint32_t)loadCellOut);
+        UARTprintf("Load:%04u, Error: %04u, PID_Out: %04u\n", (uint32_t)loadCellOut, (uint32_t)error, (uint32_t)OutDuty);
 
-        if(testMotor){
-            dutyCycle = 0.1;
-            MotorDirection = 1;
-            enableMotor();
-            //Motor_SetDuty(dutyCycle);
-            motorSendCommand(dutyCycle, MotorDirection);
-            delayMS(1000);
-           // motorSendCommand(dutyCycle, MotorDirection);
-           // delayMS(1000);
-            disableMotor();
-            testMotor = 0;
-        }
 
-        delayMS(1);
     }
 }
 

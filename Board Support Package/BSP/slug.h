@@ -76,7 +76,7 @@ void EnableInterrupts(void);
 //Initializes the GPIO pin for the button PF0 (J2.17) as input.
 //Input: none
 //Output: none
-uint8_t Button1_Init(void);
+void Button1_Init(void);
 
 //----------------Button1_Input---------------------
 // Read and return the immediate status of the button1.
@@ -234,31 +234,37 @@ void Motor_Init(uint32_t period);
 //Set Duty cycle for the motor
 //Input: Target Duty Cycle (in percent - 0:100)
 //Output: None
-void Motor_SetDuty(float duty);
+void Motor_SetDuty(uint32_t duty);
 
-//------------------setMotorPWMFreq()---------------------------
+//------------------convert2PWMDuty()---------------------------
+//Set Duty cycle for the motor
+//Input: Target Duty Cycle (in percent - 0:100)
+//Output: Command to send to PWM
+double convert2PWMDuty(uint32_t duty);
+
+//------------------setMotorPWMPeriod()---------------------------
 //Set the global variable period
 //Input: period
 //Output: None
-void setMotorPWMFreq(uint32_t period);
+void setMotorPWMPeriod(uint32_t period);
 
-//------------------getMotorPWMFreq()---------------------------
+//------------------getMotorPWMPeriod()---------------------------
 //Get the global variable period
 //Input: period
 //Output: None
-uint32_t getMotorPWMFreq(void);
+double getMotorPWMPeriod(void);
 
 //------------------motorSendCommand()---------------------------
 //Sends the final commands to the motor driver
 //Input: duty cycle, direction
 //Output: None
-void motorSendCommand(float duty, int direction);
+void motorSendCommand(uint32_t duty, int direction);
 
 //------------------checkLimits()---------------------------
 //Check duty cycle limit
 //Input: Duty Cycle
 //Output: None
-void checkLimits(float duty);
+void checkLimits(double duty);
 
 //------------------enableMotor()---------------------------
 //Enables the motor
@@ -276,13 +282,13 @@ void disableMotor(void);
 //Set global variable duty and direction
 //Input: Duty cycle, Direction
 //Output: None
-void setglobals4Motor(float duty, int direction);
+void setglobals4Motor(double duty, int direction);
 
 //------------------getglobalduty()---------------------------
 //Get global variable duty and direction
 //Input: None
 //Output: Duty cycle
-float getglobalduty(void);
+double getglobalduty(void);
 
 //------------------getglobaldirection()---------------------------
 //Get global variable duty and direction
@@ -313,21 +319,28 @@ uint32_t getControllerFlag(void);
 //Set the global variable RefForce
 //Input: Ref Force
 //Output: None
-void setGoalForce(uint32_t);
+void setGoalForce(double);
 
 //------------------getGoalForce()---------------------------
 //Get the global variable RefForce
 //Input: None
 //Output: Goal Force
-uint32_t getGoalForce(void);
+double getGoalForce(void);
 
-//------------------getRefForce()---------------------------
-//Get the global variable RefForce
+//------------------getKp()---------------------------
+//Gep proportional gain
 //Input: None
-//Output: Ref Force
-uint32_t getRefForce(void);
+//Output: Kp
+double getKp(void);
 
-//------------------PID()---------------------------
-//Use PID
+//------------------getError()---------------------------
+//Get Error in PID
 //Input: None
-//Output: Ref Force
+//Output: Error
+double getError(void);
+
+//------------------getPIDoutput()---------------------------
+//Get output in PID
+//Input: None
+//Output: out
+double getPIDoutput(void);
