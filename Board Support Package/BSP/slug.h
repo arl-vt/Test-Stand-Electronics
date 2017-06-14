@@ -32,7 +32,7 @@
 // PF1 - PWM
 //--------------------------------------------------
 // Load Cells
-// PE1
+// PE3
 //--------------------------------------------------
 // Thermocouple
 //--------------------------------------------------
@@ -202,14 +202,26 @@ void LoadCell_init(void);
 //------------------getLoadCellValue()---------------------------
 //Get Load Cell Value
 //Input: None
-//Output: Load Cell value
+//Output: Load Cell value ADC units
 uint32_t getLoadCellValue(void);
+
+//------------------measuredLoad()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value in pounds
+double measuredLoad(void);
 
 //------------------adc2Vol()---------------------------
 //Covert raw ADC value to Voltage
 //Input: Raw ADC
 //Output: Voltage
-float adc2Vol(uint32_t);
+double adc2Vol(uint32_t);
+
+//------------------Vol2Load()---------------------------
+//Covert raw voltage value to force in pound
+//Input: Raw Volage
+//Output: Pound
+double Vol2Load(double);
 
 
 //------------------Motor_Init()---------------------------
@@ -222,13 +234,19 @@ void Motor_Init(uint32_t period);
 //Set Duty cycle for the motor
 //Input: Target Duty Cycle (in percent - 0:100)
 //Output: None
-void Motor_SetDuty(float duty, uint32_t period);
+void Motor_SetDuty(float duty);
 
 //------------------setMotorPWMFreq()---------------------------
 //Set the global variable period
 //Input: period
 //Output: None
 void setMotorPWMFreq(uint32_t period);
+
+//------------------getMotorPWMFreq()---------------------------
+//Get the global variable period
+//Input: period
+//Output: None
+uint32_t getMotorPWMFreq(void);
 
 //------------------motorSendCommand()---------------------------
 //Sends the final commands to the motor driver

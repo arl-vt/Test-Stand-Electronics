@@ -71,7 +71,8 @@
 #include "driverlib/debug.h"
 
 // ****** Constants ******
-const int sampleFreq = 10000; // Sample Frequency for load cell triggering
+// Sample Frequency for load cell triggering
+const int sampleFreq = 1000; //1 KHZ
 
 // ****** Variables ******
 uint16_t samplePeriod;
@@ -110,8 +111,8 @@ void RedledTimer_Toggle();
 //Input: none
 //Output: None
 void Clock_set_fastest(void){
-    SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
-                        SYSCTL_OSC_MAIN);  // Setup system clock at 40MHz from PLL with Crystal
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
+                        SYSCTL_OSC_MAIN);  // Setup system clock at 80MHz from PLL with Crystal
 }
 
 //------------------Clock_get_frequency---------------------------
@@ -479,7 +480,7 @@ void LoadCell_init(){
     GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3);
 
     //ADC0
-    ADCHardwareOversampleConfigure(ADC0_BASE, 4); //Average 4 readings
+    ADCHardwareOversampleConfigure(ADC0_BASE, 16); //Average 4 readings
     //ADCReferenceSet(ADC0_BASE, ADC_REF_INT);
     ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
     ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
@@ -501,16 +502,46 @@ void LoadCell_init(){
     TimerEnable(TIMER0_BASE, TIMER_A);
 }
 
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value ADC units
 uint32_t getLoadCellValue(){
     return loadCellValue[0];
 }
 
+//------------------measuredLoad()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value in pounds
+double measuredLoad(void){
+    uint32_t loadADC;
+    double OutputLoad;
+
+    loadADC = getLoadCellValue();
+    OutputLoad = Vol2Load(adc2Vol(loadADC));
+    return OutputLoad;
+}
+
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value
 double adc2Vol(uint32_t adcRead){
     double output;
     output = ((adcRead*3.3)/4095);
     return output;
 }
 
+//------------------Vol2Load()---------------------------
+//Covert raw voltage value to force in pound
+//Input: Raw Volage
+//Output: Pound
+double Vol2Load(double vol){
+    double output;
+    output = vol*25.0;
+    return output;
+}
 //Interrupts
 // Timer 0A is being used to trigger load cell ADC
 void LoadCellTrigger(void){
@@ -569,6 +600,14 @@ void setMotorPWMFreq(uint32_t period){
     motorPWMperiod = period;
 }
 
+//------------------getMotorPWMFreq()---------------------------
+//Get the global variable period
+//Input: period
+//Output: None
+uint32_t getMotorPWMFreq(void){
+    return motorPWMperiod;
+}
+
 void setDirection(){
     GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_7, GPIO_PIN_7);
 }
@@ -595,9 +634,9 @@ void disableMotor(){
 //Set Duty cycle for the motor
 //Input: Target Duty Cycle
 //Output: None
-void Motor_SetDuty(float duty, uint32_t period){
+void Motor_SetDuty(float duty){
     float dutyCycle;
-    dutyCycle = duty*period;
+    dutyCycle = duty*getMotorPWMFreq();
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, dutyCycle);
 }
 //------------------motorSendCommand()---------------------------

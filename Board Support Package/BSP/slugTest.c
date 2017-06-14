@@ -165,7 +165,7 @@ void testMotor(){
 
     while(1){
         enableMotor();
-        Motor_SetDuty(.01, period);
+        Motor_SetDuty(.01);
         delayMS(1000);
         disableMotor();
         delayMS(1000);
