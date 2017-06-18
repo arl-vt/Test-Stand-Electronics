@@ -4,6 +4,9 @@ slug.obj: ../slug.c
 slug.obj: ../slug.h
 slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdint.h
 slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdbool.h
+slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/math.h
+slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/linkage.h
+slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/_defs.h
 slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h
 slug.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdarg.h
 slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/inc/hw_types.h
@@ -25,6 +28,9 @@ slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/debug.h
 ../slug.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdint.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdbool.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/math.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/linkage.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/_defs.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdarg.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/inc/hw_types.h: 

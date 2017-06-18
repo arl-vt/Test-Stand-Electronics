@@ -1,0 +1,1 @@
+--silicon_version=28 -g --diag_warning=225 --large_memory_model -z -m"Lab6.map" --stack_size=0x200 --warn_sections -i"C:/ti/ccsv7/tools/compiler/ti-cgt-c2000_16.9.1.LTS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-c2000_16.9.1.LTS/include" --reread_libs --xml_link_info="Lab6_linkInfo.xml" --rom_model -o "C:/Users/shriya/Downloads/Project/Debug/Lab6.out"

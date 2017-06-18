@@ -46,6 +46,7 @@ extern void tempSensor_handler(void); //ADC seq1 interrupt
 extern void LoadCellTrigger(void); //Timer 0 for triggering the load cell
 extern void LoadCellIntHandler(void); //ADC0, seq3 interrupt
 extern void ControllerIntHandler(void); //Timer 1A interuupt
+extern void LoggerIntHandler(void);
 
 //*****************************************************************************
 //
@@ -111,7 +112,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Timer 0 subtimer B
     ControllerIntHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
-    IntDefaultHandler,                      // Timer 2 subtimer A
+    LoggerIntHandler,                      // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B
     IntDefaultHandler,                      // Analog Comparator 0
     IntDefaultHandler,                      // Analog Comparator 1

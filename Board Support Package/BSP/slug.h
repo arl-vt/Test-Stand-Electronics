@@ -53,7 +53,6 @@
 
 #include <stdint.h>
 
-
 //------------------Clock_set_fastest---------------------------
 //Configure system clock to run at fastest settings
 //Input: none
@@ -223,7 +222,9 @@ double adc2Vol(uint32_t);
 //Output: Pound
 double Vol2Load(double);
 
-
+// ********************************************************
+// ********************* Motor ****************************
+// ********************************************************
 //------------------Motor_Init()---------------------------
 //Initialize the Motor
 //Input: frequency of operation (Eg: 10 (KHZ))
@@ -242,11 +243,11 @@ void Motor_SetDuty(uint32_t duty);
 //Output: Command to send to PWM
 double convert2PWMDuty(uint32_t duty);
 
-//------------------setMotorPWMPeriod()---------------------------
-//Set the global variable period
-//Input: period
+//------------------motorSendCommand()---------------------------
+//Sends the final commands to the motor driver
+//Input: duty cycle, direction
 //Output: None
-void setMotorPWMPeriod(uint32_t period);
+void motorSendCommand(uint32_t duty, int direction);
 
 //------------------getMotorPWMPeriod()---------------------------
 //Get the global variable period
@@ -254,17 +255,17 @@ void setMotorPWMPeriod(uint32_t period);
 //Output: None
 double getMotorPWMPeriod(void);
 
-//------------------motorSendCommand()---------------------------
-//Sends the final commands to the motor driver
-//Input: duty cycle, direction
+//------------------setDirection()---------------------------
+//Set Direction Pin High
+//Input: None
 //Output: None
-void motorSendCommand(uint32_t duty, int direction);
+void setDirection(void);
 
-//------------------checkLimits()---------------------------
-//Check duty cycle limit
-//Input: Duty Cycle
+//------------------clearDirection()---------------------------
+//Clear Direction Pin Low
+//Input: None
 //Output: None
-void checkLimits(double duty);
+void clearDirection(void);
 
 //------------------enableMotor()---------------------------
 //Enables the motor
@@ -296,6 +297,12 @@ double getglobalduty(void);
 //Output: Direction
 int getglobaldirection(void);
 
+//------------------checkLimits()---------------------------
+//Check duty cycle limit
+//Input: Duty Cycle
+//Output: None
+void checkLimits(double duty);
+
 //------------------Controller_Init()---------------------------
 //Initializes a timer routine for the controller
 //Input: None
@@ -308,12 +315,18 @@ void Controller_Init(uint32_t Controllerfreq);
 //Output: None
 void ControllerEnable(void);
 
-//------------------getControllerFlag()---------------------------
+//------------------getGoalFlag()---------------------------
 //Returns controller flag variable
 //Input: None
 //Output: None
-uint32_t getControllerFlag(void);
+uint32_t getGoalFlag(void);
 
+
+//------------------setGoalFlag()---------------------------
+//Returns controller flag variable
+//Input: None
+//Output: None
+void setGoalFlag(uin32_t);
 
 //------------------setGoalForce()---------------------------
 //Set the global variable RefForce
@@ -344,3 +357,21 @@ double getError(void);
 //Input: None
 //Output: out
 double getPIDoutput(void);
+
+//------------------checkIntegralLimit()---------------------------
+//Wrap up integral Error
+//Input: None
+//Output: None
+double checkIntegralLimit(double);
+
+//------------------deadBandCheck()---------------------------
+//Dead Band for PID loop
+//Input: None
+//Output: flag of whether goal reached or not
+uint32_t deadBandCheck(double);
+
+//------------------Logger_Init()---------------------------
+//Initializes a timer routine for the controller
+//Input: None
+//Output: None
+void Logger_Init(uint32_t LoggerFreq);
