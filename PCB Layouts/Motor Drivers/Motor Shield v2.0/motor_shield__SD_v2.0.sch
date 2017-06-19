@@ -6591,9 +6591,9 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <wire x1="93.98" y1="114.3" x2="93.98" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="A1" gate="G$1" pin="P$38"/>
-<wire x1="205.74" y1="73.66" x2="208.28" y2="73.66" width="0.1524" layer="91"/>
-<label x="205.74" y="73.66" size="1.778" layer="95"/>
+<pinref part="A1" gate="G$1" pin="P$6"/>
+<wire x1="165.1" y1="66.04" x2="167.64" y2="66.04" width="0.1524" layer="91"/>
+<label x="165.1" y="66.04" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="*INHIBIT" class="0">
@@ -6934,12 +6934,6 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <segment>
 <pinref part="A1" gate="G$1" pin="P$5"/>
 <wire x1="165.1" y1="68.58" x2="167.64" y2="68.58" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$51" class="0">
-<segment>
-<pinref part="A1" gate="G$1" pin="P$6"/>
-<wire x1="165.1" y1="66.04" x2="167.64" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$52" class="0">

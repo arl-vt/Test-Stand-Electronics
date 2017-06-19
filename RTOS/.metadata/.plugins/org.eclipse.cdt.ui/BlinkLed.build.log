@@ -1,0 +1,66 @@
+
+**** Build of configuration Debug for project BlinkLed ****
+
+"C:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
+making ../src/sysbios/sysbios.aem4f ...
+'Building file: ../empty_min.cfg'
+'Invoking: XDCtools'
+"C:/ti/xdctools_3_32_01_22_core/xs" --xdcpath="C:/ti/tirtos_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/tidrivers_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ndk_2_25_00_09/packages;C:/ti/tirtos_tivac_2_16_00_08/products/uia_2_00_05_50/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ns_1_11_00_10/packages;C:/ti/ccsv7/ccs_base;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -p ti.platforms.tiva:TM4C123GH6PM -r release -c "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS" --compileOptions "-mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path=\"C:/ti/TivaWare_C_Series-2.1.4.178\" --include_path=\"D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed\" --include_path=\"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b\" --include_path=\"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/posix\" --include_path=\"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include\" --define=ccs=\"ccs\" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi  " "../empty_min.cfg"
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/ti/TivaWare_C_Series-2.1.4.178" --include_path="D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/posix" --include_path="C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="main.d" --cmd_file="configPkg/compiler.opt" "../main.c"
+
+>> Compilation failure
+subdir_rules.mk:23: recipe for target 'main.obj' failed
+"C:/ti/xdctools_3_32_01_22_core/packages/xdc/cfg/global.h", line 39: fatal error #1965: cannot open source file "D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/Debug/configPkg/package/cfg/empty_min_pem4f.h"
+1 catastrophic error detected in the compilation of "../main.c".
+Compilation terminated.
+gmake: *** [main.obj] Error 1
+gmake[1]: Entering directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm_switch.sv7M ...
+gmake[1]: Leaving directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+gmake[1]: Entering directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/IntrinsicsSupport_asm.sv7M ...
+gmake[1]: Leaving directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+gmake[1]: Entering directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/TaskSupport_asm.sv7M ...
+gmake[1]: Leaving directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+gmake[1]: Entering directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm.sv7M ...
+gmake[1]: Leaving directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+gmake[1]: Entering directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+arem4f BIOS.obj m3_Hwi_asm.obj m3_Hwi_asm_switch.obj m3_IntrinsicsSupport_asm.obj m3_TaskSupport_asm.obj ...
+gmake[1]: Leaving directory 'D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+making package.mak (because of config.bld) ...
+configuring empty_min.xem4f from package/cfg/empty_min_pem4f.cfg ...
+generating custom ti.sysbios library makefile ... 
+Starting build of library sources ...
+making D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios/sysbios.aem4f ...
+gmake[1]: Entering directory `D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+clem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/BIOS.c ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm.sv7M ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm_switch.sv7M ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/IntrinsicsSupport_asm.sv7M ...
+gmake[1]: Leaving directory `D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios'
+Build of libraries failed.
+subdir_rules.mk:12: recipe for target 'build-1709426849-inproc' failed
+
+[main] C:\cygnus\cygwin-b20\H-i586-cygwin32\bin\sh.exe 1000 (0) sync_with_child: child 12264(0x1B4) died before initialization with status code 0x1
+[main] sh 1000 (0) sync_with_child: *** child state waiting for longjmp
+C:/Users/shriya/AppData/Local/Temp/make15692-1.sh: Cannot fork
+gmake[1]: *** [m3_IntrinsicsSupport_asm.obj] Error 2
+gmake: *** [D:/TREC-EXO/Test-Stand-Electronics/RTOS/BlinkLed/src/sysbios/sysbios.aem4f] Error 2
+error: xdc.cfg.SourceDir: "C:/ti/xdctools_3_32_01_22_core/packages/xdc/cfg/SourceDir.xs", line 209: xdc.cfg.SourceDir : Build of generated source libraries failed: exit status = 2:
+
+js: "C:/ti/xdctools_3_32_01_22_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Error 1
+gmake.exe: *** Deleting file `package/cfg/empty_min_pem4f.xdl'
+gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Deleting file `package/cfg/empty_min_pem4f.h'
+gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Deleting file `package/cfg/empty_min_pem4f.c'
+js: "C:/ti/xdctools_3_32_01_22_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+gmake[1]: *** [build-1709426849-inproc] Error 1
+gmake: *** [build-1709426849] Error 2
+subdir_rules.mk:9: recipe for target 'build-1709426849' failed
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****

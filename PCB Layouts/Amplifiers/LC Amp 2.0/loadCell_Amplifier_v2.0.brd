@@ -150,6 +150,8 @@
 <text x="46.736" y="56.642" size="1.016" layer="21" rot="R90">Gain</text>
 <text x="52.07" y="47.752" size="1.016" layer="21" rot="R90">LC</text>
 <text x="41.91" y="31.496" size="1.016" layer="21" rot="R180">IN</text>
+<dimension x1="33.02" y1="60.96" x2="57.15" y2="60.96" x3="45.085" y3="62.992" textsize="1.778" layer="20"/>
+<dimension x1="31.242" y1="26.67" x2="31.242" y2="60.198" x3="31.242" y3="43.434" textsize="1.778" layer="20"/>
 </plain>
 <libraries>
 <library name="SparkFun-Capacitors">

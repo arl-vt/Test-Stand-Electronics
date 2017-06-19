@@ -1,0 +1,7 @@
+#Sun, 18 Jun 2017 23:25:46 -0400
+#Ant properties
+#Sun Jun 18 23:25:46 EDT 2017
+p.Version=1.0.0
+
+dvt.activity.name=RTOS Analyzer/Execution Analysis
+dvt.factory.activity=${dvt.basepath}common/analysis/usecases/dvt/SA_Execution.control.xml
