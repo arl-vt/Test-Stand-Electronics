@@ -1,0 +1,40 @@
+
+**** Build of configuration Debug for project blink_TM4C_CLK ****
+
+"C:\\ti\\ccsv7\\utils\\bin\\gmake" -k all 
+'Building file: ../empty.cfg'
+'Invoking: XDCtools'
+"C:/ti/xdctools_3_32_01_22_core/xs" --xdcpath="C:/ti/ccsv7/ccs_base;C:/ti/tirtos_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/tidrivers_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ndk_2_25_00_09/packages;C:/ti/tirtos_tivac_2_16_00_08/products/uia_2_00_05_50/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ns_1_11_00_10/packages;C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_41_00_26/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ndk_2_24_01_18/packages;C:/ti/tirtos_tivac_2_16_00_08/products/uia_2_00_02_39/packages;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -p ti.platforms.tiva:TM4C123GH6PM -r release -c "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS" "../empty.cfg"
+making package.mak (because of package.bld) ...
+generating interfaces for package configPkg (because package/package.xdc.inc is older than package.xdc) ...
+configuring empty.xem4f from package/cfg/empty_pem4f.cfg ...
+generating custom ti.sysbios library makefile ... 
+Starting build of library sources ...
+making D:/TREC-EXO/Test-Stand-Electronics/RTOS/blink_TM4C_CLK/src/sysbios/sysbios.aem4f ...
+gmake[1]: Entering directory `D:/TREC-EXO/Test-Stand-Electronics/RTOS/blink_TM4C_CLK/src/sysbios'
+gmake[1]: Nothing to be done for `all'.
+gmake[1]: Leaving directory `D:/TREC-EXO/Test-Stand-Electronics/RTOS/blink_TM4C_CLK/src/sysbios'
+Build of libraries done.
+clem4f package/cfg/empty_pem4f.c ...
+warning: ti.tirtos.TIRTOS: "C:/ti/tirtos_tivac_2_16_00_08/packages/ti/tirtos/TIRTOS.xs", line 49: ti.tirtos.TIRTOS : ti.tirtos.TIRTOS module is no longer required to configure driver instrumentation.  Please use the ti.drivers.Config and ti.mw.Config modules instead.
+'Finished building: ../empty.cfg'
+' '
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b" --include_path="C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.0.12573c" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE --define=ccs="ccs" -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="main.d" --cmd_file="configPkg/compiler.opt" "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: blink_TM4C_CLK.out'
+'Invoking: ARM Linker'
+"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE --define=ccs="ccs" -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"blink_TM4C_CLK.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="blink_TM4C_CLK_linkInfo.xml" --rom_model -o "blink_TM4C_CLK.out" "./main.obj" "../EK_TM4C123GXL.cmd" -l"configPkg/linker.cmd" -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/ccs/Debug/driverlib.lib" -llibc.a -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.0.12573c/driverlib/ccs/Debug/driverlib.lib" -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.0.12573c/usblib/ccs/Debug/usblib.lib" 
+<Linking>
+error #10008-D: cannot find file "C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.0.12573c/driverlib/ccs/Debug/driverlib.lib"
+error #10008-D: cannot find file "C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.0.12573c/usblib/ccs/Debug/usblib.lib"
+error #10010: errors encountered during linking; "blink_TM4C_CLK.out" not built
+
+>> Compilation failure
+makefile:143: recipe for target 'blink_TM4C_CLK.out' failed
+gmake: *** [blink_TM4C_CLK.out] Error 1
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****

@@ -2865,3 +2865,122 @@ java.lang.NullPointerException
 !ENTRY com.ti.ccstudio.debug 1 0 2017-06-16 18:29:51.063
 !MESSAGE DS_ERROR: CORTEX_M4_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
 
+!SESSION 2017-06-21 10:44:28.176 -----------------------------------------------
+eclipse.buildId=4.6.0.I20160606-1100
+java.version=1.8.0_112
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product com.ti.ccstudio.branding.product -product com.ti.ccstudio.branding.product -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product com.ti.ccstudio.branding.product -product com.ti.ccstudio.branding.product -data D:\TREC-EXO\Test-Stand-Electronics\BSP -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 4 0 2017-06-21 10:44:33.265
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 4 0 2017-06-21 10:44:33.412
+!MESSAGE debugServerDir=C:/ti/ccsv7/ccs_base/DebugServer
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2017-06-21 10:46:43.378
+!MESSAGE No repository found at file:/c:/ti/ccsv7/eclipse/downloads/featurerepo/.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2017-06-21 10:46:45.431
+!MESSAGE No repository found at file:/C:/ti/ccsv7/eclipse/downloads/featurerepo.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2017-06-21 10:47:17.586
+!MESSAGE Unable to read repository at http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/.
+!STACK 0
+java.io.IOException: http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/ is not a valid repository location.
+	at org.eclipse.equinox.internal.p2.metadata.repository.SimpleMetadataRepositoryFactory.load(SimpleMetadataRepositoryFactory.java:102)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:57)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:768)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:668)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:96)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:92)
+	at com.ti.ccstudio.p2app.DirectorApplication.initializeRepositories(DirectorApplication.java:775)
+	at com.ti.ccstudio.p2app.DirectorApplication.run(DirectorApplication.java:1389)
+	at com.ti.ccstudio.p2app.DirectorApplication.listIUsFoundInRepos(DirectorApplication.java:1775)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.listIUsFoundInRepos(DirectorApplicationDelegate.java:40)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.resolveIU(DirectorApplicationDelegate.java:72)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter._replaceIusWithLatest(CCSAppCenter.java:397)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter.access$3(CCSAppCenter.java:364)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter$2.run(CCSAppCenter.java:240)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2017-06-21 10:47:52.063
+!MESSAGE Unable to read repository at http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/.
+!STACK 0
+java.io.IOException: http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/ is not a valid repository location.
+	at org.eclipse.equinox.internal.p2.metadata.repository.SimpleMetadataRepositoryFactory.load(SimpleMetadataRepositoryFactory.java:102)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:57)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:768)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:668)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:96)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:92)
+	at com.ti.ccstudio.p2app.DirectorApplication.initializeRepositories(DirectorApplication.java:775)
+	at com.ti.ccstudio.p2app.DirectorApplication.run(DirectorApplication.java:1389)
+	at com.ti.ccstudio.p2app.DirectorApplication.listIUsFoundInRepos(DirectorApplication.java:1775)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.listIUsFoundInRepos(DirectorApplicationDelegate.java:40)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.resolveIU(DirectorApplicationDelegate.java:72)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter._replaceIusWithLatest(CCSAppCenter.java:397)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter.access$3(CCSAppCenter.java:364)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter$2.run(CCSAppCenter.java:240)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2017-06-21 10:47:57.954
+!MESSAGE Unable to read repository at http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/.
+!STACK 0
+java.io.IOException: http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/ is not a valid repository location.
+	at org.eclipse.equinox.internal.p2.metadata.repository.SimpleMetadataRepositoryFactory.load(SimpleMetadataRepositoryFactory.java:102)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:57)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:768)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:668)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:96)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:92)
+	at com.ti.ccstudio.p2app.DirectorApplication.initializeRepositories(DirectorApplication.java:775)
+	at com.ti.ccstudio.p2app.DirectorApplication.run(DirectorApplication.java:1389)
+	at com.ti.ccstudio.p2app.DirectorApplication.listIUsFoundInRepos(DirectorApplication.java:1775)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.listIUsFoundInRepos(DirectorApplicationDelegate.java:40)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.resolveIU(DirectorApplicationDelegate.java:72)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter._replaceIusWithLatest(CCSAppCenter.java:397)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter.access$3(CCSAppCenter.java:364)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter$2.run(CCSAppCenter.java:240)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2017-06-21 10:47:58.300
+!MESSAGE Unable to read repository at http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/.
+!STACK 0
+java.io.IOException: http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2mac/ is not a valid repository location.
+	at org.eclipse.equinox.internal.p2.metadata.repository.SimpleMetadataRepositoryFactory.load(SimpleMetadataRepositoryFactory.java:102)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:57)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:768)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:668)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:96)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:92)
+	at com.ti.ccstudio.p2app.DirectorApplication.initializeRepositories(DirectorApplication.java:775)
+	at com.ti.ccstudio.p2app.DirectorApplication.run(DirectorApplication.java:1389)
+	at com.ti.ccstudio.p2app.DirectorApplication.listIUsFoundInRepos(DirectorApplication.java:1775)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.listIUsFoundInRepos(DirectorApplicationDelegate.java:40)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.resolveIU(DirectorApplicationDelegate.java:72)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter._replaceIusWithLatest(CCSAppCenter.java:397)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter.access$3(CCSAppCenter.java:364)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter$2.run(CCSAppCenter.java:240)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2017-06-21 10:48:04.144
+!MESSAGE Unable to read repository at http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/.
+!STACK 0
+java.io.IOException: http://software-dl.ti.com/dsps/dsps_public_sw/sdo_ccstudio/codegen/Updates/p2linux/ is not a valid repository location.
+	at org.eclipse.equinox.internal.p2.metadata.repository.SimpleMetadataRepositoryFactory.load(SimpleMetadataRepositoryFactory.java:102)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:57)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:768)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:668)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:96)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:92)
+	at com.ti.ccstudio.p2app.DirectorApplication.initializeRepositories(DirectorApplication.java:775)
+	at com.ti.ccstudio.p2app.DirectorApplication.run(DirectorApplication.java:1389)
+	at com.ti.ccstudio.p2app.DirectorApplication.listIUsFoundInRepos(DirectorApplication.java:1775)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.listIUsFoundInRepos(DirectorApplicationDelegate.java:40)
+	at com.ti.ccstudio.app.center.p2.DirectorApplicationDelegate.resolveIU(DirectorApplicationDelegate.java:72)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter._replaceIusWithLatest(CCSAppCenter.java:397)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter.access$3(CCSAppCenter.java:364)
+	at com.ti.ccstudio.app.center.internal.CCSAppCenter$2.run(CCSAppCenter.java:240)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
