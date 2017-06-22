@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\TREC-EXO\Test-Stand-Electronics\RTOS\Blink_Task"/>
+		<item value="D:\TREC-EXO\Test-Stand-Electronics\RTOS\Blink_Swi"/>
 		<item value="D:\TREC-EXO\Test-Stand-Electronics\RTOS\Blink_Clock"/>
 	</list>
 	<section name="CleanDialogSettings">
