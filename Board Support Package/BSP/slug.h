@@ -1,6 +1,7 @@
 // Slug.h
-// Runs on TM4C123 with Tiva shield version 2.0
-// The Board Support package is an abstraction layer forming a bridge between the low level and the high level softwrae.
+// Runs on TM4C123 with TIVA shield v2.0
+// The Board Support package is an abstraction layer forming a bridge between the low level
+// and the high level software.
 // This file contains function prototypes for the software interface to the Tiva Shield
 
 // Shriya Shah
@@ -27,60 +28,181 @@
 // J2.20 GND (ground)
 // J2.16 nothing (reset)
 //--------------------------------------------------
+// Internally connected on launchpad
+// PD0 - PB6
+// PD1 - PB7
+//--------------------------------------------------
 // Motors
 // PB7 - Direction
 // PF1 - PWM
+// Current Monitor - PE5
 //--------------------------------------------------
 // Load Cells
 // PE3
 //--------------------------------------------------
 // Thermocouple
-//--------------------------------------------------
-// Current Sensor
+// PE0
 //--------------------------------------------------
 // Absolute Encoders
+// PA5 - Tx
+// PA4 - Rx
+//--------------------------------------------------
+// Incremental Encoders
+// PC5 - ChA
+// PC6 - ChB
+// PC4 - ChI
 //--------------------------------------------------
 // Display LEDS
-// PF1, PF2, PF3
+// Blue - PD7
+// Yellow - PC7
 //--------------------------------------------------
-// Button
-// PF0
+// Reset Button
+// RST
 //--------------------------------------------------
 // Serial Monitor
 // PA0, PA1
 //--------------------------------------------------
-// unconnected pins
+// CAN
+// PB5 - Tx
+// PB4 - Rx
+//--------------------------------------------------
+// Additional ADC
+// PE2
+//--------------------------------------------------
+// Additional SPI
+// PF0 - Rx
+// PF2 - CLK
+// PF3 - CS
+// PD3 - TX
+//--------------------------------------------------
+// I2C
+// PA6 - SCL
+// PA7 - SDA
+//--------------------------------------------------
+// GPIO
+// PB6, PF4, PE1
+//--------------------------------------------------
+
+// ************* includes ******************************************
 
 #include <stdint.h>
 
-//------------------Clock_set_fastest---------------------------
-//Configure system clock to run at fastest settings
-//Input: none
-//Output: None
-void Clock_set_fastest(void);
+#include <stdint.h>
+#include <stdbool.h>
+#include <math.h>
+
+#include "utils/uartstdio.h"
+
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/tm4c123gh6pm.h"
+#include "inc/hw_gpio.h"
+#include "inc/hw_ints.h"
+
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "driverlib/pin_map.h"
+#include "driverlib/pwm.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
+#include "driverlib/uart.h"
+#include "driverlib/adc.h"
+#include "driverlib/debug.h"
+
+//------------------Clock_set_40MHz---------------------------
+// Configure system clock to run at 40MHZ settings
+// Input: None
+// Output: None
+void Clock_set_40MHz(void);
+
+//------------------Clock_set_80MHz---------------------------
+// Configure system clock to run at 80MHZ settings
+// Input: None
+// Output: None
+void Clock_set_80MHz(void);
 
 //------------------Clock_get_frequency---------------------------
-//Get Current clock frequency
-//Input: none
-//Output: Frequency
+// Get Current clock frequency
+// Input: none
+// Output: Frequency
 uint32_t Clock_get_frequency(void);
 
 //------------------EnableInterrupts()---------------------------
-//Enable all interuupts system wide
-//Input: none
-//Output: None
+// Enable all interrupts system wide
+// Input: none
+// Output: None
 void EnableInterrupts(void);
 
+//------------------Delay_cycle----------------------------
+// Delays the execution by approximately the given number of cycles
+// It is not accurate and blocking
+// Input: delay cycles
+void Delay_cycle(uint32_t delay);
+
+//------------------delayMS----------------------------
+// Delays in millisecond
+// It is not accurate and blocking
+// Input: ms
+void delayMS(int);
+
+// ----------------BlueLED_Init-----------------------
+// Initializes the Blue LED on PD7
+// Input: None
+// Output: None
+void BlueLED_Init(void);
+
+// ----------------BlueLED_Set-----------------------
+// Set Blue LED
+// Input: None
+// Output: None
+void BlueLED_Set(void);
+
+// ----------------BlueLED_Clear-----------------------
+// Clear Blue LED
+// Input: None
+// Output: None
+void BlueLED_Clear(void);
+
+// ----------------BlueLED_Toggle-----------------------
+// Toggle Blue LED
+// Input: None
+// Output: None
+void BlueLED_Toggle(void);
+
+// ----------------YellowLED_Init-----------------------
+// Initializes the Yellow LED on PC7
+// Input: None
+// Output: None
+void YellowLED_Init(void);
+
+// ----------------YellowLED_Set-----------------------
+// Set Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Set(void);
+
+// ----------------BYellowLED_Clear-----------------------
+// Clear Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Clear(void);
+
+// ----------------YellowLED_Toggle-----------------------
+// Toggle Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Toggle(void);
+
 // ---------------Button1_Init----------------------
-//Initializes the GPIO pin for the button PF0 (J2.17) as input.
-//Input: none
-//Output: none
+// Initializes the GPIO pin for the button PF4 (J2.17) as input.
+// Input: none
+// Output: none
 void Button1_Init(void);
 
 //----------------Button1_Input---------------------
 // Read and return the immediate status of the button1.
 // Button debouncing not considered
-// Input: none
+// Input: None
 // Output: Button not pressed - non zero
 //         Button pressed - zero
 // Call Button1_init() first
@@ -93,7 +215,7 @@ void RGBled_Init(uint8_t red, uint8_t green, uint8_t blue);
 // ----------------RGBled_Set-----------------------
 // Sets the RGB LED on PF1, PF2 and PF3
 // Input: non zero input sents the LEDs
-// Output: none
+// Output: None
 void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue);
 
 // ----------------RGBled_Toggle-----------------------
@@ -102,26 +224,56 @@ void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue);
 //         red is toggle for red
 //         blue is toggle for blue
 //         green is toggle for green
-// Output: none
+// Output: None
 void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue);
 
-// ----------------RedledTimer_Init-----------------------
-// Use Timer 0A to generate an interrupt at every given period
-// Initializes the Red LED on PF1
-void RedledTimer_Init(int period);
+//------------------initTimer0---------------------------
+//Initialize Timer0A as a periodic timer
+//Input: frequency
+//Output: None
+void initTimer0(int frequency);
+
+//------------------initConsole()---------------------------
+//Initialize the serial monitor using UART, uses the Utilities library as well
+//Input: Baud rate
+//Output: None
+void initConsole(int);
+
+//------------------Console_Send()---------------------------
+//Send Data to the serial monitor using UART
+//Input: Data to Send
+//Output: None
+void Console_Send(char* input);
+
+//------------------Logger_Init()---------------------------
+//Initializes a Timer which logs data at a specified rate
+//Input: Logger frequency and Baud Rate
+//Output: None
+void Logger_Init(uint32_t LoggerFreq,  int BaudRate);
+
+//------------------LoggerIntHandler()---------------------------
+//Interrupt Handler for the Logger
+//Input: None
+//Output: None
+void LoggerIntHandler(void);
 
 
-//------------------Delay_cycle----------------------------
-//Delays the execution by approximately the given number of cycles
-// It is not accurate
-//Input: delay cycles
-void Delay_cycle(uint32_t delay);
 
-//------------------delayMS----------------------------
-//Delays in MS
-// It is not accurate
-//Input: ms
-void delayMS(int);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //------------------SerialMonitor_Init()---------------------------
 //Initialize the serial monitor using UART
@@ -136,17 +288,7 @@ void SerialMonitor_Init(void);
 //Output: None
 void SerialMonitor_Loop(void);
 
-//------------------initConsole()---------------------------
-//Initialize the serial monitor using UART, uses the Utilities library as well
-//Input: None
-//Output: None
-void initConsole(void);
 
-//------------------SerialMonitor_Send()---------------------------
-//Send Data to the serial monitor using UART
-//Input: None
-//Output: None
-void SerialMonitor_Send(char* input);
 
 //------------------SerialMonitor_Receive()---------------------------
 //Receive data from the serial monitor using UART
@@ -370,8 +512,3 @@ double checkIntegralLimit(double);
 //Output: flag of whether goal reached or not
 uint32_t deadBandCheck(double);
 
-//------------------Logger_Init()---------------------------
-//Initializes a timer routine for the controller
-//Input: None
-//Output: None
-void Logger_Init(uint32_t LoggerFreq);

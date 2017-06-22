@@ -18,12 +18,12 @@ char loadCellBuffer[80] = "test";
 double setPointForce = 50;
 
 
-int main(void){
+int main6(void){
     //Setup system clock , 80MHZ
     Clock_set_fastest();
 
     //Configure Serial monitor
-    initConsole();
+    //initConsole();
 
     //Motor Initialize @ 10KHZ PWM freq
     uint32_t MotorPwmFreq = 10000; //10KHZ
@@ -46,7 +46,7 @@ int main(void){
 
     //Initialize the logger
     uint32_t loggerFreq = 100; //10 Hz
-    Logger_Init(loggerFreq);
+    //Logger_Init(loggerFreq);
 
     //Enable system wide interrupts
     EnableInterrupts();

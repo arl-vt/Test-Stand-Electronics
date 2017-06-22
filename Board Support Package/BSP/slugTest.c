@@ -2,26 +2,49 @@
 #include "slug.h"
 #include "utils/uartstdio.h"
 
-uint8_t Red = 0, Green = 0, Blue = 0;
+void testBlueLED(void);
+void testBYellowLED(void);
+void testTivaLED_Switch(void);
+void testTimerToggle(void);
+void testConsole(void);
+void testLogger(void);
 
-void testGPIO(void);
-void testGPIOTimers(void);
+
+
 void testTempSensor(void);
-void  testSerialMonitor(void);
-void  testSerialMonitor2(void);
+void testSerialMonitor(void);
+void testSerialMonitor2(void);
 void testloadCellAmplifier(void);
 void testMotor(void);
 void testController(void);
 
-int main3(void){
+int main(void){
 
-    Clock_set_fastest();
+    // Initialize clock at 40 MHZ frequency
+    Clock_set_40MHz();
 
-    // 1. test GPIO - Input and Output
-    //testGPIO();
+    // Test LED - Blue
+    //testBlueLED();
 
-    // 2. Test Timer and Interrupts
-    //testGPIOTimers();
+    // Test LED - Yellow
+    //testBYellowLED();
+
+    // Test TIVA Launchpad LED and Button1 - Input and Output
+    //testTivaLED_Switch();
+
+    // Test Timer and Interrupts
+    //testTimerToggle();
+
+    // Test Console
+    //testConsole();
+
+    // test logger
+    testLogger();
+
+
+
+
+
 
     // 3. Test Temperature Sensor
     //testTempSensor();
@@ -37,15 +60,66 @@ int main3(void){
     //testMotor();
 
     //7. Test Controller
-    testController();
+    //testController();
+
+}
+
+
+//----------------------------------------------------------------------------
+// Test Toggle behavior of Blue LED
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testBlueLED(){
+    BlueLED_Init();
+
+    while(1){
+
+        // Toggle 1
+        BlueLED_Set();
+        delayMS(100);
+        BlueLED_Clear();
+        delayMS(100);
+
+        // Toggle 2
+        BlueLED_Toggle();
+        delayMS(500);
+        BlueLED_Toggle();
+        delayMS(500);
+    }
+
 }
 
 //----------------------------------------------------------------------------
-// Test Turn ON/OFF behavior
+// Test Toggle behavior of Yellow LED
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testBYellowLED(){
+    YellowLED_Init();
+
+    while(1){
+
+        // Toggle 1
+        YellowLED_Set();
+        delayMS(100);
+        YellowLED_Clear();
+        delayMS(100);
+
+        // Toggle 2
+        YellowLED_Toggle();
+        delayMS(500);
+        YellowLED_Toggle();
+        delayMS(500);
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+// Test Turn ON/OFF behavior of TIVA Launchpad
 // Button press
 // Toggle behavior
 //----------------------------------------------------------------------------
-void testGPIO(void){
+void testTivaLED_Switch(void){
     RGBled_Init(1, 1, 1); // Initialize all
     Button1_Init();
 
@@ -77,12 +151,100 @@ void testGPIO(void){
 // Test Timer module and Interrupt generation
 // Toggle LED at 10 HZ
 //----------------------------------------------------------------------------
-void testGPIOTimers(){
+void testTimerToggle(){
+    // Initialize LED
+    RGBled_Init(0, 0, 1); //Initialize blue led
+
+    // Define toggle frequency
     int freq = 10; //10Hz frequency of toggling
-    RedledTimer_Init(freq);
+
+    // Initialize Timer0A
+    initTimer0(freq);
+
+    // Enable system wide interrupts
+    EnableInterrupts();
+
     while(1){
     }
 }
+
+//----------------------------------------------------------------------------
+// Test the Serial Monitor Connection with the computer
+// Uses the microUSB port on TIVA
+// Use the printf facility
+//----------------------------------------------------------------------------
+void testConsole(){
+    int BaudRate  = 115200;
+    bool flag = 1;
+    int i = 0;
+    initConsole(BaudRate);
+
+    UARTprintf("System Startup");
+
+    while(1){
+        if(flag==1){
+            UARTprintf("%d \n", i);
+            i++;
+        }
+
+        if(i==10){
+            flag = 0;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Logger - Serial Monitor and Timer2
+// Uses the microUSB port on TIVA
+// Use the printf facility
+//----------------------------------------------------------------------------
+void testLogger(){
+    int BaudRate  = 115200;
+
+    uint32_t loggerFreq = 10; //10 Hz
+
+    Logger_Init(loggerFreq, BaudRate);
+
+    UARTprintf("System Startup");
+
+    while(1){
+        // Do nothing
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------------
 // Test Temperature sensor on ADC0
@@ -90,7 +252,7 @@ void testGPIOTimers(){
 //----------------------------------------------------------------------------
 void testTempSensor(){
     tempSensor_init();
-    initConsole();
+    //initConsole();
     EnableInterrupts();
 
     UARTprintf("\n Recording internal Temp Sensor: \n");
@@ -125,24 +287,11 @@ void testSerialMonitor(){
     }
 }
 
-//----------------------------------------------------------------------------
-// Test the Serial Monitor Connection with the computer
-// Uses the microUSB port on TIVA
-// Use the printf facility
-//----------------------------------------------------------------------------
-void testSerialMonitor2(){
-    initConsole();
-    SerialMonitor_Send("Wohooo");
-    while(1){
-       // SerialMonitor_Send();
-    }
-}
-
 
 void testloadCellAmplifier(){
     uint32_t sensorVal;
     float vol;
-    initConsole();
+    //initConsole();
     LoadCell_init();
     EnableInterrupts();
 
@@ -157,7 +306,7 @@ void testloadCellAmplifier(){
 }
 
 void testMotor(){
-    initConsole();
+   // initConsole();
     uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
     Motor_Init(period); // Initialize with 10KHZ
 

@@ -17,7 +17,7 @@ int main2(void){
     Clock_set_fastest();
 
     //Configure Serial monitor
-    initConsole();
+    //initConsole();
 
     //Motor Initialize
     uint32_t period = 2000; //clock/freq: 20MHz/10KHZ

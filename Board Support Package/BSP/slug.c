@@ -1,7 +1,8 @@
-// slug.c
-// Runs on TM4C123 with Tiva shield version 2.0
-// The Board Support package is an abstraction layer forming a bridge between the low level and the high level software.
-// This file contains function prototypes for the software interface to the Tiva Shield
+// Slug.c
+// Runs on TM4C123 with TIVA shield v2.0
+// The Board Support package is an abstraction layer forming a bridge between the low level
+// and the high level software.
+// This file contains function definition for the software interface to the Tiva Shield
 
 // Shriya Shah
 // May 18, 2017
@@ -27,51 +28,68 @@
 // J2.20 GND (ground)
 // J2.16 nothing (reset)
 //--------------------------------------------------
+// Internally connected on launchpad
+// PD0 - PB6
+// PD1 - PB7
+//--------------------------------------------------
 // Motors
 // PB7 - Direction
 // PF1 - PWM
+// Current Monitor - PE5
 //--------------------------------------------------
 // Load Cells
+// PE3
 //--------------------------------------------------
 // Thermocouple
-//--------------------------------------------------
-// Current Sensor
+// PE0
 //--------------------------------------------------
 // Absolute Encoders
+// PA5 - Tx
+// PA4 - Rx
+//--------------------------------------------------
+// Incremental Encoders
+// PC5 - ChA
+// PC6 - ChB
+// PC4 - ChI
 //--------------------------------------------------
 // Display LEDS
-// PF1, PF2, PF3
+// Blue - PD7
+// Yellow - PC7
 //--------------------------------------------------
-// Button
-// PF0
+// Reset Button
+// RST
 //--------------------------------------------------
-// unconnected pins
+// Serial Monitor
+// PA0, PA1
+//--------------------------------------------------
+// CAN
+// PB5 - Tx
+// PB4 - Rx
+//--------------------------------------------------
+// Additional ADC
+// PE2
+//--------------------------------------------------
+// Additional SPI
+// PF0 - Rx
+// PF2 - CLK
+// PF3 - CS
+// PD3 - TX
+//--------------------------------------------------
+// I2C
+// PA6 - SCL
+// PA7 - SDA
+//--------------------------------------------------
+// GPIO
+// PB6, PF4, PE1
+
 
 #include "slug.h"
+// ***************************** Constants ****************************
+// ------------------------ Pin defines -------------------------------
+#define BLUE_LED PD7
+#define YELLOW_LED PC7
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <math.h>
-
-#include "utils/uartstdio.h"
-
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/tm4c123gh6pm.h"
-#include "inc/hw_gpio.h"
-#include "inc/hw_ints.h"
-
-#include "driverlib/sysctl.h"
-#include "driverlib/gpio.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/pwm.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
-#include "driverlib/uart.h"
-#include "driverlib/adc.h"
-#include "driverlib/debug.h"
-
-// ****** Constants ******
+// --------------------------------------------------------------------
 // Sample Frequency for load cell triggering
 const int sampleFreq = 500; //500 Hz
 const int clockFreq = 80000000; //80MHz
@@ -84,6 +102,7 @@ const double MaxSteadyError = 100;
 // Controller
 const double DEADBAND = 0.01;
 const int BIAS = 5; //5% duty bias
+
 
 // ****** Variables ******
 uint16_t samplePeriod; //For load cell sampling period calculation
@@ -113,41 +132,159 @@ volatile double Kd = 0.0; //D from PID
 double globalDutyCycle;
 double globalDirection;
 
-uint32_t dummy = 0;
+uint32_t globalDummy = 0;
 
-
-//------------------Clock_set_fastest---------------------------
-//Configure system clock to run at fastest settings
+// ********************* Clock ***************************************
+//------------------Clock_set_40MHz---------------------------
+// Configure system clock to run at fastest settings
 // 16MHZ crystal on main oscillator which drives the PLL (400 MHZ).
 // There is a default /2 divider in clock path and we specify /5
-// Final Clock frequency: 400/10 = 40 MHZ
-//Input: none
-//Output: None
-void Clock_set_fastest(void){
+// Final Clock frequency: (400/2)/5 = 40 MHZ
+// Input: None
+// Output: None
+void Clock_set_40MHz(void){
     SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
                         SYSCTL_OSC_MAIN);  // Setup system clock at 80MHz from PLL with Crystal
 }
 
+//------------------Clock_set_80MHz---------------------------
+// Configure system clock to run at 80MHZ settings
+// Input: None
+// Output: None
+void Clock_set_80MHz(void);
+
 //------------------Clock_get_frequency---------------------------
-//Get Current clock frequency
-//Input: none
-//Output: Frequency
+// Get Current clock frequency
+// Input: None
+// Output: Frequency
 uint32_t Clock_get_frequency(void){
     return SysCtlClockGet();
 }
 
+// ******************* Enable Interrupts ******************************
 //------------------EnableInterrupts()---------------------------
-//Enable all interuupts system wide
-//Input: none
-//Output: None
+// Enable all interrupts system wide
+// Input: None
+// Output: None
 void EnableInterrupts(void){
     IntMasterEnable();
 }
 
+// ********************* Delay *********************************
+//------------------Delay_cycle----------------------------
+// Delays the execution by approximately the given number of cycles
+// It is not accurate and blocking
+// Input: delay cycles
+void Delay_cycle(uint32_t delay){
+    SysCtlDelay(delay);
+}
+
+//------------------delayMS----------------------------
+// Delays in millisecond
+// It is not accurate and blocking
+// Input: ms
+void delayMS(int ms) {
+    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
+}
+
+
+
+// ********************* Debug LED *********************************
+// ----------------BlueLED_Init-----------------------
+// Initializes the Blue LED on PD7
+// Input: None
+// Output: None
+void BlueLED_Init(){
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD)){
+          } // Enable and wait for the port to be ready for access
+
+     // Unlock PD7
+     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x80;
+     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
+
+     //Configure port for LED operation
+     GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_7);
+}
+
+// ----------------BlueLED_Set-----------------------
+// Set Blue LED
+// Input: None
+// Output: None
+void BlueLED_Set(){
+    GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_7, GPIO_PIN_7);
+}
+
+// ----------------BlueLED_Clear-----------------------
+// Clear Blue LED
+// Input: None
+// Output: None
+void BlueLED_Clear(){
+    GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_7, ~GPIO_PIN_7);
+}
+
+// ----------------BlueLED_Toggle-----------------------
+// Toggle Blue LED
+// Input: None
+// Output: None
+void BlueLED_Toggle(){
+    //Read current state and write back the opposite state
+    if(GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_7)){
+        GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_7, ~GPIO_PIN_7);
+    }else{
+        GPIOPinWrite(GPIO_PORTD_BASE,GPIO_PIN_7, GPIO_PIN_7);
+    }
+}
+
+// ----------------YellowLED_Init-----------------------
+// Initializes the Yellow LED on PC7
+// Input: None
+// Output: None
+void YellowLED_Init(){
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOC)){
+             } // Enable and wait for the port to be ready for access
+
+        //Configure port for LED operation
+        GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_7);
+}
+
+// ----------------YellowLED_Set-----------------------
+// Set Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Set(){
+    GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, GPIO_PIN_7);
+}
+
+// ----------------BYellowLED_Clear-----------------------
+// Clear Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Clear(){
+    GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, ~GPIO_PIN_7);
+}
+
+// ----------------YellowLED_Toggle-----------------------
+// Toggle Yellow LED
+// Input: None
+// Output: None
+void YellowLED_Toggle(void){
+    //Read current state and write back the opposite state
+    if(GPIOPinRead(GPIO_PORTC_BASE, GPIO_PIN_7)){
+        GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, ~GPIO_PIN_7);
+    }else{
+        GPIOPinWrite(GPIO_PORTC_BASE,GPIO_PIN_7, GPIO_PIN_7);
+    }
+}
+
+
+// ********************* Launchpad Button and LED *********************************
 // ---------------Button1_Init----------------------
 //Initializes the GPIO pin for the button PF0 (J2.17) as input.
-//Input: none
-//Output: none
+//Input: None
+//Output: None
 void Button1_Init(void){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)){
@@ -160,7 +297,7 @@ void Button1_Init(void){
 //----------------Button1_Input---------------------
 // Read and return the immediate status of the button1.
 // Button debouncing not considered
-// Input: none
+// Input: None
 // Output: Button not pressed - non zero
 //         Button pressed - zero
 // Call Button1_init() first
@@ -192,7 +329,7 @@ void RGBled_Init(uint8_t red, uint8_t green, uint8_t blue){
 // ----------------RGBled_Set-----------------------
 // Sets the RGB LED on PF1, PF2 and PF3
 // Input: non zero input sets the LEDs
-// Output: none
+// Output: None
 void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue){
     if(red>0){
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
@@ -217,7 +354,7 @@ void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue){
 //         red is toggle for red
 //         blue is toggle for blue
 //         green is toggle for green
-// Output: none
+// Output: None
 void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue){
     if(red){
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1)^GPIO_PIN_1);
@@ -236,72 +373,208 @@ void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue){
     }
 }
 
-// ----------------RedledTimer_Init-----------------------
-// Initializes the Red LED on PF1
-void RedledTimer_Init(int period){
-    uint32_t periods; // Timer delays
+// ----------------Timer0IntHandler-----------------------
+// ISR for Blink LED
+void Timer0IntHandler(void){
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1);
+    //RedledTimer_Toggle();
+    RGBled_Toggle(0, 0, 1);
+}
+
+// ********************* Timers *********************************
+//------------------initTimer0A---------------------------
+//Initialize Timer0A as a periodic timer
+//Input: frequency
+//Output: None
+void initTimer0(int frequency){
+    uint32_t periods; // Timer delays
 
     //Configure Timer
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
     TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
 
     // Define period
-    periods = (SysCtlClockGet()/period)/2; //We want 10 Hz toggle frequency therefore the period should be the
+    periods = (SysCtlClockGet()/frequency)/2; //We want 10 Hz toggle frequency therefore the period should be the
     //system clock / desired toggle freq/2
     TimerLoadSet(TIMER0_BASE, TIMER_A, periods-1);
 
     //Enable iNTERRUPTS
     IntEnable(INT_TIMER0A);
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-    IntMasterEnable();
 
     //Enable Timer
     TimerEnable(TIMER0_BASE, TIMER_A);
 }
 
-// ----------------ledTimer_Toggle-----------------------
-// Toggle Red LED on PF1 based on Timer interrupt
-void RedledTimer_Toggle(){
-    //Read current state and write back the opposite state
-    if(GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2)){
-        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIO_PIN_2);
-    }else{
-        GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, GPIO_PIN_2);
-    }
+// ********************* Logger *********************************
+//------------------initConsole()---------------------------
+// Initialize the serial monitor using UART, uses the Utilities library as well
+// Much easier to work with
+// Input: None
+// Output: None
+void initConsole(int BaudRate){
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
+
+    //Configure Pins for UART functionality
+    GPIOPinConfigure(GPIO_PA0_U0RX);
+    GPIOPinConfigure(GPIO_PA1_U0TX);
+    GPIOPinTypeUART(GPIO_PORTA_BASE,GPIO_PIN_0|GPIO_PIN_1);
+
+    // Configure UART clock and Baud rate
+    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC); //Precision internal clock
+    UARTStdioConfig(0, BaudRate, 16000000); // UART Module 0, Baud Rate 115200 and System clock 16MHZ
 }
 
-//// ----------------Timer0IntHandler-----------------------
-//// ISR for Blink LED
-//void Timer0IntHandler_LED(void){
-//    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-//
-//    RedledTimer_Toggle();
-//}
-//
-//void Timer1IntHandler(void){
-//    TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-//
-//    RedledTimer_Toggle();
-//}
-
-//------------------Delay_cycle----------------------------
-//Delays the execution by approximately the given number of cycles
-// It is not accurate
-//Input: delay cycles
-void Delay_cycle(uint32_t delay){
-    SysCtlDelay(delay);
+//------------------Console_Send()---------------------------
+// Send Data to the serial monitor using UART
+// Input: Data to send
+// Output: None
+void Console_Send(char* input){
+    UARTprintf(input);
 }
 
-//------------------delayMS----------------------------
-//Delays in MS
-// It is not accurate
-//Input: ms
-void delayMS(int ms) {
-    SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
+
+//------------------Logger_Init()---------------------------
+//Initializes a timer routine for the controller
+//Input: Logger frequency and Baud Rate
+//Output: None
+void Logger_Init(uint32_t LoggerFreq, int BaudRate){
+
+        initConsole(BaudRate);
+
+
+        uint32_t periods; // Timer delays
+
+        //Configure Timer
+        SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2);
+        // wait for timer module 1 to be ready
+        while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER2))
+            {
+            }
+
+        TimerConfigure(TIMER2_BASE, TIMER_CFG_PERIODIC);
+
+        // set timer 1 to run off of system clock
+       // TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
+
+        // Define period
+        periods = (SysCtlClockGet()/LoggerFreq);
+        //periods = (clockFreq/Controllerfreq);
+        TimerLoadSet(TIMER2_BASE, TIMER_A, periods-1);
+
+        // register the timer interrupt service routine
+        TimerIntRegister(TIMER2_BASE, TIMER_A, *LoggerIntHandler);
+
+        // clear rollover interrupt and then enable it
+        TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
+        TimerIntEnable(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
+
+        IntEnable(INT_TIMER2A);
+
+        TimerEnable(TIMER2_BASE, TIMER_A);
 }
+
+//------------------LoggerIntHandler()---------------------------
+//Interrupt Handler for the Logger
+//Input: None
+//Output: None
+void LoggerIntHandler(void){
+    TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
+
+    globalDummy += 1;
+    UARTprintf("%d \n", globalDummy);
+
+}
+
+
+
+
+
+void doSomethingforlogging(){
+//only for conversions
+int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
+int sign = 1;
+double loadCellOut, error, OutDuty, gDuty;
+
+//Measure Load Cell value
+loadCellOut = measuredLoad();
+intload = loadCellOut;
+fracload = (loadCellOut - intload)*1000;
+
+//Measure Error
+error = getError();
+if(error<0){
+    sign = -1;
+    error = error*sign;
+}
+intErr = error*sign;
+fracErr = (error-intErr)*1000;
+
+//PWM output
+OutDuty = getPIDoutput();
+if(OutDuty<0){
+    sign = -1;
+    OutDuty = OutDuty*sign;
+}
+intPWM = OutDuty*sign;
+fracPWM = (OutDuty-intPWM)*1000;
+
+//Direction
+dir = getglobaldirection();
+
+//Global duty
+gDuty = getglobalduty();
+intgDuty = gDuty;
+fracgDuty = (gDuty-intgDuty)*1000;
+
+UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //------------------SerialMonitor_Init()---------------------------
 //Initialize the serial monitor using UART - Use SerialMonitorConfigure for
@@ -362,39 +635,6 @@ void UARTIntHandler(void){
     while(UARTCharsAvail(UART0_BASE)){
         UARTCharPutNonBlocking(UART0_BASE, UARTCharGetNonBlocking(UART0_BASE)); //Echo Character
     }
-}
-
-//------------------initConsole()---------------------------
-//Initialize the serial monitor using UART, uses the Utilities library as well
-// Much easier to work with
-//Input: None
-//Output: None
-void initConsole(){
-
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
-
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
-
-    //Configure Pins for UART functionality
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    GPIOPinTypeUART(GPIO_PORTA_BASE,GPIO_PIN_0|GPIO_PIN_1);
-
-    // Configure UART clock and Baud rate
-    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC); //Precision internal clock
-    UARTStdioConfig(0, 115200, 16000000); // UART Module 0, Baud Rate 115200 and System clock 16MHZ
-
-    UARTprintf("\n System Startup!\n");
-}
-
-//------------------SerialMonitor_Send()---------------------------
-//Send Data to the serial monitor using UART
-//Input: None
-//Output: None
-void SerialMonitor_Send(char* input){
-    UARTprintf(input);
 }
 
 //------------------SerialMonitor_Receive()---------------------------
@@ -903,82 +1143,5 @@ double getPIDoutput(void){
     return PID_OUT;
 }
 
-//------------------Force control loop -----------------------
-void LoggerIntHandler(void){
-    TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
 
-    //only for conversions
-    int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
-    int sign = 1;
-    double loadCellOut, error, OutDuty, gDuty;
 
-    //Measure Load Cell value
-    loadCellOut = measuredLoad();
-    intload = loadCellOut;
-    fracload = (loadCellOut - intload)*1000;
-
-    //Measure Error
-    error = getError();
-    if(error<0){
-        sign = -1;
-        error = error*sign;
-    }
-    intErr = error*sign;
-    fracErr = (error-intErr)*1000;
-
-    //PWM output
-    OutDuty = getPIDoutput();
-    if(OutDuty<0){
-        sign = -1;
-        OutDuty = OutDuty*sign;
-    }
-    intPWM = OutDuty*sign;
-    fracPWM = (OutDuty-intPWM)*1000;
-
-    //Direction
-    dir = getglobaldirection();
-
-    //Global duty
-    gDuty = getglobalduty();
-    intgDuty = gDuty;
-    fracgDuty = (gDuty-intgDuty)*1000;
-
-    UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
-
-}
-
-//------------------Logger_Init()---------------------------
-//Initializes a timer routine for the controller
-//Input: None
-//Output: None
-void Logger_Init(uint32_t LoggerFreq){
-        uint32_t periods; // Timer delays
-
-        //Configure Timer
-        SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2);
-        // wait for timer module 1 to be ready
-        while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER2))
-            {
-            }
-
-        TimerConfigure(TIMER2_BASE, TIMER_CFG_PERIODIC);
-
-        // set timer 1 to run off of system clock
-       // TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
-
-        // Define period
-        periods = (SysCtlClockGet()/LoggerFreq);
-        //periods = (clockFreq/Controllerfreq);
-        TimerLoadSet(TIMER2_BASE, TIMER_A, periods-1);
-
-        // register the timer interrupt service routine
-        TimerIntRegister(TIMER2_BASE, TIMER_A, *LoggerIntHandler);
-
-        // clear rollover interrupt and then enable it
-        TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
-        TimerIntEnable(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
-
-        IntEnable(INT_TIMER2A);
-
-        TimerEnable(TIMER2_BASE, TIMER_A);
-}

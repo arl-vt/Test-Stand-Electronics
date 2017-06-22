@@ -1,0 +1,32 @@
+#include <stdint.h>
+#include "../slug.h"
+#include "utils/uartstdio.h"
+
+void BlueledTest(void);
+
+int main(void){
+
+    Clock_set_fastest();
+
+
+}
+
+//----------------------------------------------------------------------------
+// Test Turn ON/OFF behavior
+// Button press
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testGPIO(void){
+    RGBled_Init(1, 1, 1); // Initialize all
+    Button1_Init();
+
+    while(1){
+        BlueledTest();
+    }
+}
+
+// Test LED
+void BlueledTest(){
+    BlueLED_Init();
+    BlueLED_Set();
+}

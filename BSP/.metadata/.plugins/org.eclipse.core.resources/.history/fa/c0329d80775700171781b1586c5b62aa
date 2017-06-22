@@ -1,0 +1,483 @@
+// Slug.h
+// Runs on TM4C123 with TIVA shield v2.0
+// The Board Support package is an abstraction layer forming a bridge between the low level
+// and the high level software.
+// This file contains function prototypes for the software interface to the Tiva Shield
+
+// Shriya Shah
+// May 18, 2017
+
+//  J1   J3               J4   J2
+// [ 1] [21]             [40] [20]
+// [ 2] [22]             [39] [19]
+// [ 3] [23]             [38] [18]
+// [ 4] [24]             [37] [17]
+// [ 5] [25]             [36] [16]
+// [ 6] [26]             [35] [15]
+// [ 7] [27]             [34] [14]
+// [ 8] [28]             [33] [13]
+// [ 9] [29]             [32] [12]
+// [10] [30]             [31] [11]
+
+
+// Connected pins and Peripherals
+// power and reset
+// J1.1 +3.3V (power)
+// J3.21 +5V (power)
+// J3.22 GND (ground)
+// J2.20 GND (ground)
+// J2.16 nothing (reset)
+//--------------------------------------------------
+// Internally connected on launchpad
+// PD0 - PB6
+// PD1 - PB7
+//--------------------------------------------------
+// Motors
+// PB7 - Direction
+// PF1 - PWM
+// Current Monitor - PE5
+//--------------------------------------------------
+// Load Cells
+// PE3
+//--------------------------------------------------
+// Thermocouple
+// PE0
+//--------------------------------------------------
+// Absolute Encoders
+// PA5 - Tx
+// PA4 - Rx
+//--------------------------------------------------
+// Incremental Encoders
+// PC5 - ChA
+// PC6 - ChB
+// PC4 - ChI
+//--------------------------------------------------
+// Display LEDS
+// Blue - PD7
+// Yellow - PC7
+//--------------------------------------------------
+// Reset Button
+// RST
+//--------------------------------------------------
+// Serial Monitor
+// PA0, PA1
+//--------------------------------------------------
+// CAN
+// PB5 - Tx
+// PB4 - Rx
+//--------------------------------------------------
+// Additional ADC
+// PE2
+//--------------------------------------------------
+// Additional SPI
+// PF0 - Rx
+// PF2 - CLK
+// PF3 - CS
+// PD3 - TX
+//--------------------------------------------------
+// I2C
+// PA6 - SCL
+// PA7 - SDA
+//--------------------------------------------------
+// GPIO
+// PB6, PF4, PE1
+//--------------------------------------------------
+
+// ************* includes ******************************************
+
+#include <stdint.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <math.h>
+
+#include "utils/uartstdio.h"
+
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/tm4c123gh6pm.h"
+#include "inc/hw_gpio.h"
+#include "inc/hw_ints.h"
+
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "driverlib/pin_map.h"
+#include "driverlib/pwm.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
+#include "driverlib/uart.h"
+#include "driverlib/adc.h"
+#include "driverlib/debug.h"
+
+// --------------------------------------------------------------------
+// ***************************** Constants ****************************
+// ------------------------ Pin defines -------------------------------
+#define BLUE_LED PD7
+#define YELLOW_LED PC7
+
+// --------------------------------------------------------------------
+// Sample Frequency for load cell triggering
+const int sampleFreq = 500; //500 Hz
+const int clockFreq = 80000000; //80MHz
+const int PWMclockFreq = 40000000; //80MHz
+
+// Error
+const double MinSteadyError = 0;
+const double MaxSteadyError = 100;
+
+// Controller
+const double DEADBAND = 0.01;
+const int BIAS = 5; //5% duty bias
+
+// ****** Variables ******
+uint16_t samplePeriod; //For load cell sampling period calculation
+uint32_t rawTemp[1];
+uint32_t loadCellValue[1];
+
+volatile uint32_t goalReached;
+
+double pwmPeriod;
+volatile double pwmDuty;
+
+// ******* PID Control *********************
+double goalPos;
+volatile double ERROR;
+volatile double LAST_ERROR = 0;
+volatile double TOTAL_ERROR = 0;
+volatile double PID_OUT;
+volatile double P, D, I;
+
+//PID VALUES
+volatile double Kp; //P from PID 20
+volatile double Kbar = .1; //P from PID 0.08
+volatile double Ki = 0.01; //.01; //I from PID 1
+volatile double Kd = 0.0; //D from PID
+
+// *********Globals******************************
+double globalDutyCycle;
+double globalDirection;
+
+uint32_t dummy = 0;
+
+//------------------Clock_set_fastest---------------------------
+//Configure system clock to run at fastest settings
+//Input: none
+//Output: None
+void Clock_set_fastest(void);
+
+//------------------Clock_get_frequency---------------------------
+//Get Current clock frequency
+//Input: none
+//Output: Frequency
+uint32_t Clock_get_frequency(void);
+
+//------------------EnableInterrupts()---------------------------
+//Enable all interuupts system wide
+//Input: none
+//Output: None
+void EnableInterrupts(void);
+
+// ---------------Button1_Init----------------------
+//Initializes the GPIO pin for the button PF0 (J2.17) as input.
+//Input: none
+//Output: none
+void Button1_Init(void);
+
+//----------------Button1_Input---------------------
+// Read and return the immediate status of the button1.
+// Button debouncing not considered
+// Input: none
+// Output: Button not pressed - non zero
+//         Button pressed - zero
+// Call Button1_init() first
+uint8_t Button1_Input(void);
+
+// ----------------RGBled_Init-----------------------
+// Initializes the RGB LED on PF1, PF2 and PF3
+void RGBled_Init(uint8_t red, uint8_t green, uint8_t blue);
+
+// ----------------RGBled_Set-----------------------
+// Sets the RGB LED on PF1, PF2 and PF3
+// Input: non zero input sents the LEDs
+// Output: none
+void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue);
+
+// ----------------RGBled_Toggle-----------------------
+// Toggles the RGB LED on PF1, PF2 and PF3
+// Input: non zero input toggles the LEDs
+//         red is toggle for red
+//         blue is toggle for blue
+//         green is toggle for green
+// Output: none
+void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue);
+
+// ----------------RedledTimer_Init-----------------------
+// Use Timer 0A to generate an interrupt at every given period
+// Initializes the Red LED on PF1
+void RedledTimer_Init(int period);
+
+
+//------------------Delay_cycle----------------------------
+//Delays the execution by approximately the given number of cycles
+// It is not accurate
+//Input: delay cycles
+void Delay_cycle(uint32_t delay);
+
+//------------------delayMS----------------------------
+//Delays in MS
+// It is not accurate
+//Input: ms
+void delayMS(int);
+
+//------------------SerialMonitor_Init()---------------------------
+//Initialize the serial monitor using UART
+//Input: None
+//Output: None
+void SerialMonitor_Init(void);
+
+//------------------SerialMonitor_Loop()---------------------------
+//Receive data from the serial monitor using UART and
+// loop it back
+//Input: None
+//Output: None
+void SerialMonitor_Loop(void);
+
+//------------------initConsole()---------------------------
+//Initialize the serial monitor using UART, uses the Utilities library as well
+//Input: None
+//Output: None
+void initConsole(void);
+
+//------------------SerialMonitor_Send()---------------------------
+//Send Data to the serial monitor using UART
+//Input: None
+//Output: None
+void SerialMonitor_Send(char* input);
+
+//------------------SerialMonitor_Receive()---------------------------
+//Receive data from the serial monitor using UART
+//Input: None
+//Output: None
+void SerialMonitor_Receive(void);
+
+
+//------------------tempSensor_init()---------------------------
+//Initialize the Temperature Sensor on Board
+//Input: None
+//Output: None
+void tempSensor_init(void);
+
+//------------------tempSensor_startConversion()---------------------------
+//Start the sequencer for Temp Sensor
+//Input: None
+//Output: None
+void tempSensor_startConversion(void);
+
+//------------------tempSensor_handler()---------------------------
+//Interrupt handler for Temp Sensor
+//Input: None
+//Output: None
+void tempSensor_handler(void);
+
+//------------------getAvgTemp()---------------------------
+//Get Average Temperature
+//Input: None
+//Output: Average Temp
+uint32_t getAvgTemp(void);
+
+//------------------convert2C()---------------------------
+//Convert Average Temperature to degree Celsius
+//Input: None
+//Output: None
+uint32_t convert2C(uint32_t);
+
+//------------------convert2F()---------------------------
+//Convert Average Temperature to degree Farenhiet
+//Input: None
+//Output: None
+uint32_t convert2F(uint32_t);
+
+
+//------------------LoadCell_init()---------------------------
+//Initialize the Load Cell input on Board
+//Input: None
+//Output: None
+void LoadCell_init(void);
+
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value ADC units
+uint32_t getLoadCellValue(void);
+
+//------------------measuredLoad()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value in pounds
+double measuredLoad(void);
+
+//------------------adc2Vol()---------------------------
+//Covert raw ADC value to Voltage
+//Input: Raw ADC
+//Output: Voltage
+double adc2Vol(uint32_t);
+
+//------------------Vol2Load()---------------------------
+//Covert raw voltage value to force in pound
+//Input: Raw Volage
+//Output: Pound
+double Vol2Load(double);
+
+// ********************************************************
+// ********************* Motor ****************************
+// ********************************************************
+//------------------Motor_Init()---------------------------
+//Initialize the Motor
+//Input: frequency of operation (Eg: 10 (KHZ))
+//Output: Period
+void Motor_Init(uint32_t period);
+
+//------------------Motor_SetDuty()---------------------------
+//Set Duty cycle for the motor
+//Input: Target Duty Cycle (in percent - 0:100)
+//Output: None
+void Motor_SetDuty(uint32_t duty);
+
+//------------------convert2PWMDuty()---------------------------
+//Set Duty cycle for the motor
+//Input: Target Duty Cycle (in percent - 0:100)
+//Output: Command to send to PWM
+double convert2PWMDuty(uint32_t duty);
+
+//------------------motorSendCommand()---------------------------
+//Sends the final commands to the motor driver
+//Input: duty cycle, direction
+//Output: None
+void motorSendCommand(uint32_t duty, int direction);
+
+//------------------getMotorPWMPeriod()---------------------------
+//Get the global variable period
+//Input: period
+//Output: None
+double getMotorPWMPeriod(void);
+
+//------------------setDirection()---------------------------
+//Set Direction Pin High
+//Input: None
+//Output: None
+void setDirection(void);
+
+//------------------clearDirection()---------------------------
+//Clear Direction Pin Low
+//Input: None
+//Output: None
+void clearDirection(void);
+
+//------------------enableMotor()---------------------------
+//Enables the motor
+//Input: None
+//Output: None
+void enableMotor(void);
+
+//------------------disableMotor()---------------------------
+//Disables the motor
+//Input: None
+//Output: None
+void disableMotor(void);
+
+//------------------setglobals4Motor()---------------------------
+//Set global variable duty and direction
+//Input: Duty cycle, Direction
+//Output: None
+void setglobals4Motor(double duty, int direction);
+
+//------------------getglobalduty()---------------------------
+//Get global variable duty and direction
+//Input: None
+//Output: Duty cycle
+double getglobalduty(void);
+
+//------------------getglobaldirection()---------------------------
+//Get global variable duty and direction
+//Input: None
+//Output: Direction
+int getglobaldirection(void);
+
+//------------------checkLimits()---------------------------
+//Check duty cycle limit
+//Input: Duty Cycle
+//Output: None
+void checkLimits(double duty);
+
+//------------------Controller_Init()---------------------------
+//Initializes a timer routine for the controller
+//Input: None
+//Output: None
+void Controller_Init(uint32_t Controllerfreq);
+
+//------------------ControllerEnable()---------------------------
+//Enable Timer 1A
+//Input: None
+//Output: None
+void ControllerEnable(void);
+
+//------------------getGoalFlag()---------------------------
+//Returns controller flag variable
+//Input: None
+//Output: None
+uint32_t getGoalFlag(void);
+
+
+//------------------setGoalFlag()---------------------------
+//Returns controller flag variable
+//Input: None
+//Output: None
+void setGoalFlag(uin32_t);
+
+//------------------setGoalForce()---------------------------
+//Set the global variable RefForce
+//Input: Ref Force
+//Output: None
+void setGoalForce(double);
+
+//------------------getGoalForce()---------------------------
+//Get the global variable RefForce
+//Input: None
+//Output: Goal Force
+double getGoalForce(void);
+
+//------------------getKp()---------------------------
+//Gep proportional gain
+//Input: None
+//Output: Kp
+double getKp(void);
+
+//------------------getError()---------------------------
+//Get Error in PID
+//Input: None
+//Output: Error
+double getError(void);
+
+//------------------getPIDoutput()---------------------------
+//Get output in PID
+//Input: None
+//Output: out
+double getPIDoutput(void);
+
+//------------------checkIntegralLimit()---------------------------
+//Wrap up integral Error
+//Input: None
+//Output: None
+double checkIntegralLimit(double);
+
+//------------------deadBandCheck()---------------------------
+//Dead Band for PID loop
+//Input: None
+//Output: flag of whether goal reached or not
+uint32_t deadBandCheck(double);
+
+//------------------Logger_Init()---------------------------
+//Initializes a timer routine for the controller
+//Input: None
+//Output: None
+void Logger_Init(uint32_t LoggerFreq);

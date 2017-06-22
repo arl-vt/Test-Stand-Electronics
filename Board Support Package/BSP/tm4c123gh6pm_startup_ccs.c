@@ -43,7 +43,8 @@ static void IntDefaultHandler(void);
 extern void _c_int00(void);
 extern void UARTIntHandler(void);
 extern void tempSensor_handler(void); //ADC seq1 interrupt
-extern void LoadCellTrigger(void); //Timer 0 for triggering the load cell
+//extern void LoadCellTrigger(void); //Timer 0 for triggering the load cell
+extern void Timer0IntHandler(void);
 extern void LoadCellIntHandler(void); //ADC0, seq3 interrupt
 extern void ControllerIntHandler(void); //Timer 1A interuupt
 extern void LoggerIntHandler(void);
@@ -108,7 +109,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     LoadCellIntHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    LoadCellTrigger,                      // Timer 0 subtimer A
+    Timer0IntHandler,                      // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     ControllerIntHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
