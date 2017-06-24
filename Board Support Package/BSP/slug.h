@@ -257,24 +257,6 @@ void Logger_Init(uint32_t LoggerFreq,  int BaudRate);
 //Output: None
 void LoggerIntHandler(void);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //------------------SerialMonitor_Init()---------------------------
 //Initialize the serial monitor using UART
 //Input: None
@@ -288,8 +270,6 @@ void SerialMonitor_Init(void);
 //Output: None
 void SerialMonitor_Loop(void);
 
-
-
 //------------------SerialMonitor_Receive()---------------------------
 //Receive data from the serial monitor using UART
 //Input: None
@@ -299,9 +279,9 @@ void SerialMonitor_Receive(void);
 
 //------------------tempSensor_init()---------------------------
 //Initialize the Temperature Sensor on Board
-//Input: None
+//Input: hardwareAverage (can be 2,4,8,16,32 or 64)
 //Output: None
-void tempSensor_init(void);
+void tempSensor_Init(int hardwareAverage);
 
 //------------------tempSensor_startConversion()---------------------------
 //Start the sequencer for Temp Sensor
@@ -332,6 +312,16 @@ uint32_t convert2C(uint32_t);
 //Input: None
 //Output: None
 uint32_t convert2F(uint32_t);
+
+
+
+
+
+
+
+
+
+
 
 
 //------------------LoadCell_init()---------------------------

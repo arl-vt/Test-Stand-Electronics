@@ -2,6 +2,8 @@
 #include "slug.h"
 #include "utils/uartstdio.h"
 
+uint32_t raw, tempC, tempF, i = 0;
+
 void testBlueLED(void);
 void testBYellowLED(void);
 void testTivaLED_Switch(void);
@@ -39,15 +41,15 @@ int main(void){
     //testConsole();
 
     // test logger
-    testLogger();
-
-
-
-
-
+    //testLogger();
 
     // 3. Test Temperature Sensor
-    //testTempSensor();
+    testTempSensor();
+
+
+
+
+
 
     // 4. Test UART functionality
     //testSerialMonitor();
@@ -213,67 +215,68 @@ void testLogger(){
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------------
 // Test Temperature sensor on ADC0
 // On Interrupt with Serial Monitor connected
 //----------------------------------------------------------------------------
 void testTempSensor(){
-    tempSensor_init();
-    //initConsole();
+
+    int BaudRate  = 115200;
+    int hardwareAverage = 8;
+    initConsole(BaudRate);
+    tempSensor_Init(hardwareAverage);
     EnableInterrupts();
 
     UARTprintf("\n Recording internal Temp Sensor: \n");
-    uint32_t raw, tempC, tempF, i = 0;
 
     while(1){
         //Trigger temp read
         tempSensor_startConversion();
 
-        //print temp every 2 second
-        if(++i == 2000){
+        //print temperature every 2 second
+        //if(++i == 2000){
             i = 0;
             raw = getAvgTemp();
             tempC = convert2C(raw);
             tempF = convert2F(raw);
             UARTprintf("Avg temp is: %4d, *C is: %4d, *F is: %4d\n", raw, tempC, tempF);
-        }
+        //}
         delayMS(1);
     }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------------
 // Test the Serial Monitor Connection with the computer

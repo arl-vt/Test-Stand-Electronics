@@ -491,6 +491,173 @@ void LoggerIntHandler(void){
 
 }
 
+//------------------SerialMonitor_Init()---------------------------
+//Initialize the serial monitor using UART - Use SerialMonitorConfigure for
+// printf facility
+//Input: None
+//Output: None
+void SerialMonitor_Init(){
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
+
+    //Configure Pins for UART functionality
+    GPIOPinConfigure(GPIO_PA0_U0RX);
+    GPIOPinConfigure(GPIO_PA1_U0TX);
+    GPIOPinTypeUART(GPIO_PORTA_BASE,GPIO_PIN_0|GPIO_PIN_1);
+
+    // Set UART functionality - Baud rate, parity etc
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8|UART_CONFIG_STOP_ONE|UART_CONFIG_PAR_NONE));
+
+    //Enable Interrupts
+    //IntMasterEnable();
+    IntEnable(INT_UART0);
+    UARTIntEnable(UART0_BASE, UART_INT_RX|UART_INT_RT); //Enable RX and RT interrupt sources only
+
+    // Initial UART message
+       UARTCharPut(UART0_BASE, 'S');
+       UARTCharPut(UART0_BASE, 't');
+       UARTCharPut(UART0_BASE, 'a');
+       UARTCharPut(UART0_BASE, 'r');
+       UARTCharPut(UART0_BASE, 't');
+       UARTCharPut(UART0_BASE, 'u');
+       UARTCharPut(UART0_BASE, 'p');
+       UARTCharPut(UART0_BASE, '!');
+       UARTCharPut(UART0_BASE, ' ');
+}
+
+//------------------SerialMonitor_Loop()---------------------------
+//Receive data from the serial monitor using UART and
+// loop it back
+//Input: None
+//Output: None
+void SerialMonitor_Loop(){
+    if(UARTCharsAvail(UART0_BASE))
+        UARTCharPut(UART0_BASE, UARTCharGet(UART0_BASE));
+}
+
+//------------------UARTIntHandler()---------------------------
+//ISR for UART
+//Input: None
+//Output: None
+void UARTIntHandler(void){
+    uint32_t status;
+    status = UARTIntStatus(UART0_BASE, true); //get the interrupt status
+    UARTIntClear(UART0_BASE, status); //clear the interrupts
+    while(UARTCharsAvail(UART0_BASE)){
+        UARTCharPutNonBlocking(UART0_BASE, UARTCharGetNonBlocking(UART0_BASE)); //Echo Character
+    }
+}
+
+//------------------SerialMonitor_Receive()---------------------------
+//Receive data from the serial monitor using UART
+//Input: None
+//Output: None
+void SerialMonitor_Receive();
+
+//------------------tempSensor_init()---------------------------
+//Initialize the Temperature Sensor on Board, processor triggered
+//Input: hardwareAverage (can be 2,4,8,16,32 or 64)
+//Output: None
+void tempSensor_Init(int hardwareAverage){
+    // Enable ADC0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+    SysCtlDelay(2);
+
+    if(hardwareAverage > 0){
+        //Hardware Averaging
+        ADCHardwareOversampleConfigure(ADC0_BASE, hardwareAverage); //average n samples (can be 2,4,8,16,32 or 64)
+    }
+
+    // Configure Sequencer, sample sequencer 1, processor triggered - 1 MSPS, highest priority
+    ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_PROCESSOR, 0);
+
+    // Configure interrupt flag to be set on last sample and notify that this is last sequence
+    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_TS|ADC_CTL_IE|ADC_CTL_END);
+
+    //Enable ADC sequencer 1
+    ADCSequenceEnable(ADC0_BASE, 1);
+
+    // Interrupt enable
+    ADCIntClear(ADC0_BASE, 1);
+    ADCIntEnable(ADC0_BASE, 1);
+    IntEnable(INT_ADC0SS1);
+}
+
+//------------------tempSensor_handler()---------------------------
+//Interrupt handler for Temp Sensor
+//Input: None
+//Output: None
+void tempSensor_handler(void){
+    ADCIntClear(ADC0_BASE, 1);
+    ADCSequenceDataGet(ADC0_BASE, 1, rawTemp);
+}
+
+//------------------getAvgTemp()---------------------------
+//Get Average Temperature
+//Input: None
+//Output: Average Temp
+uint32_t getAvgTemp(){
+    return rawTemp[0];
+}
+
+//------------------tempSensor_startConversion()---------------------------
+//Start the sequencer for Temp Sensor
+//Input: None
+//Output: None
+void tempSensor_startConversion(void){
+    ADCProcessorTrigger(ADC0_BASE, 1);
+}
+
+//------------------convert2C()---------------------------
+//Convert Average Temperature to degree Celsius
+//Input: None
+//Output: None
+uint32_t convert2C(uint32_t TempAvg){
+    uint32_t TempValueC;
+    TempValueC = (1475 - ((2475*TempAvg))/4096)/10;
+    return TempValueC;
+}
+
+//------------------convert2F()---------------------------
+//Convert Average Temperature to degree Farenhiet
+//Input: None
+//Output: None
+uint32_t convert2F(uint32_t TempAvg){
+    uint32_t TempValueF, TempValueC;
+    TempValueC = (1475 - ((2475*TempAvg))/4096)/10;
+    TempValueF = ((TempValueC*9)+160)/5;
+    return TempValueF;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -576,145 +743,6 @@ UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr,
 
 
 
-//------------------SerialMonitor_Init()---------------------------
-//Initialize the serial monitor using UART - Use SerialMonitorConfigure for
-// printf facility
-//Input: None
-//Output: None
-void SerialMonitor_Init(){
-
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
-
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    SysCtlDelay(3); //Just to be sure that the peripherals were enabled
-
-    //Configure Pins for UART functionality
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    GPIOPinTypeUART(GPIO_PORTA_BASE,GPIO_PIN_0|GPIO_PIN_1);
-
-    // Set UART functionality - Baud rate, parity etc
-    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8|UART_CONFIG_STOP_ONE|UART_CONFIG_PAR_NONE));
-
-    //Enable Interrupts
-    //IntMasterEnable();
-    IntEnable(INT_UART0);
-    UARTIntEnable(UART0_BASE, UART_INT_RX|UART_INT_RT); //Enable RX and RT interrupt sources only
-
-    // Initial UART message
-       UARTCharPut(UART0_BASE, 'S');
-       UARTCharPut(UART0_BASE, 't');
-       UARTCharPut(UART0_BASE, 'a');
-       UARTCharPut(UART0_BASE, 'r');
-       UARTCharPut(UART0_BASE, 't');
-       UARTCharPut(UART0_BASE, 'u');
-       UARTCharPut(UART0_BASE, 'p');
-       UARTCharPut(UART0_BASE, '!');
-       UARTCharPut(UART0_BASE, ' ');
-}
-
-//------------------SerialMonitor_Loop()---------------------------
-//Receive data from the serial monitor using UART and
-// loop it back
-//Input: None
-//Output: None
-void SerialMonitor_Loop(){
-    if(UARTCharsAvail(UART0_BASE))
-        UARTCharPut(UART0_BASE, UARTCharGet(UART0_BASE));
-}
-
-//------------------UARTIntHandler()---------------------------
-//ISR for UART
-//Input: None
-//Output: None
-void UARTIntHandler(void){
-    uint32_t status;
-    status = UARTIntStatus(UART0_BASE, true); //get the interrupt status
-    UARTIntClear(UART0_BASE, status); //clear the interrupts
-    while(UARTCharsAvail(UART0_BASE)){
-        UARTCharPutNonBlocking(UART0_BASE, UARTCharGetNonBlocking(UART0_BASE)); //Echo Character
-    }
-}
-
-//------------------SerialMonitor_Receive()---------------------------
-//Receive data from the serial monitor using UART
-//Input: None
-//Output: None
-void SerialMonitor_Receive();
-
-//------------------tempSensor_init()---------------------------
-//Initialize the Temperature Sensor on Board, processor triggered
-//Input: None
-//Output: None
-void tempSensor_init(){
-    // Enable ADC0
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-    SysCtlDelay(2);
-
-    //Hardware Averaging
-    ADCHardwareOversampleConfigure(ADC0_BASE, 16); //average n samples (can be 2,4,8,16,32 or 64)
-
-    // Configure Sequencer, sample sequencer 1, processor triggered - 1 MSPS, highest priority
-    ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_PROCESSOR, 0);
-
-    // Configure interrupt flag to be set on last sample and notify that this is last sequence
-    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_TS|ADC_CTL_IE|ADC_CTL_END);
-
-    //Enable ADC sequencer 1
-    ADCSequenceEnable(ADC0_BASE, 1);
-
-    // Interrupt enable
-    ADCIntClear(ADC0_BASE, 1);
-    ADCIntEnable(ADC0_BASE, 1);
-    IntEnable(INT_ADC0SS1);
-}
-
-//------------------tempSensor_handler()---------------------------
-//Interrupt handler for Temp Sensor
-//Input: None
-//Output: None
-void tempSensor_handler(void){
-    ADCIntClear(ADC0_BASE, 1);
-    ADCSequenceDataGet(ADC0_BASE, 1, rawTemp);
-}
-
-//------------------getAvgTemp()---------------------------
-//Get Average Temperature
-//Input: None
-//Output: Average Temp
-uint32_t getAvgTemp(){
-    return rawTemp[0];
-}
-
-//------------------tempSensor_startConversion()---------------------------
-//Start the sequencer for Temp Sensor
-//Input: None
-//Output: None
-void tempSensor_startConversion(void){
-    ADCProcessorTrigger(ADC0_BASE, 1);
-}
-
-//------------------convert2C()---------------------------
-//Convert Average Temperature to degree Celsius
-//Input: None
-//Output: None
-uint32_t convert2C(uint32_t TempAvg){
-    uint32_t TempValueC;
-    TempValueC = (1475 - ((2475*TempAvg))/4096)/10;
-    return TempValueC;
-}
-
-//------------------convert2F()---------------------------
-//Convert Average Temperature to degree Farenhiet
-//Input: None
-//Output: None
-uint32_t convert2F(uint32_t TempAvg){
-    uint32_t TempValueF, TempValueC;
-    TempValueC = (1475 - ((2475*TempAvg))/4096)/10;
-    TempValueF = ((TempValueC*9)+160)/5;
-    return TempValueF;
-}
 
 //------------------LoadCell_init()---------------------------
 //Initialize the Load Cell input on Board
