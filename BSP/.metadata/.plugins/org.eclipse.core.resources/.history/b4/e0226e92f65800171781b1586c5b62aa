@@ -1,0 +1,36 @@
+#include <stdint.h>
+#include "slug.h"
+#include "utils/uartstdio.h"
+
+uint32_t raw, tempC, tempF, i = 0;
+
+void testBlueLED(void);
+void testBYellowLED(void);
+void testTivaLED_Switch(void);
+void testTimerToggle(void);
+void testConsole(void);
+void testLogger(void);
+void testTempSensor(void);
+void testMotor(void);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void testSerialMonitor(void);
+void testSerialMonitor2(void);
+void testloadCellAmplifier(void);
+
+void testController(void);

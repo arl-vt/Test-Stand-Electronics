@@ -90,10 +90,8 @@
 #define YELLOW_LED PC7
 
 // --------------------------------------------------------------------
-// Sample Frequency for load cell triggering
-const int sampleFreq = 500; //500 Hz
 const int clockFreq = 80000000; //80MHz
-const int PWMclockFreq = 40000000; //80MHz
+const int PWMclockFreq = clockFreq/2; //40MHz
 
 // Error
 const double MinSteadyError = 0;
@@ -109,10 +107,16 @@ uint16_t samplePeriod; //For load cell sampling period calculation
 uint32_t rawTemp[1];
 uint32_t loadCellValue[1];
 
-volatile uint32_t goalReached;
+volatile uint32_t goalReached; //flag
 
-double pwmPeriod;
+double pwmPeriod; // Variables for motor control
 volatile double pwmDuty;
+
+uint32_t swingloopCount = 0; // variables in swing control
+int swingDir = 1; //motor direction in swing behavior
+int swingDuty = 2; // duty cycle in swing behavior
+
+uint32_t loggerCount = 0; //Logger timing count
 
 // ******* PID Control *********************
 double goalPos;
@@ -129,8 +133,8 @@ volatile double Ki = 0.01; //.01; //I from PID 1
 volatile double Kd = 0.0; //D from PID
 
 // *********Globals******************************
-double globalDutyCycle;
-double globalDirection;
+uint32_t globalDutyCycle = 0;
+int globalDirection = 0;
 
 uint32_t globalDummy = 0;
 
@@ -144,14 +148,17 @@ uint32_t globalDummy = 0;
 // Output: None
 void Clock_set_40MHz(void){
     SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
-                        SYSCTL_OSC_MAIN);  // Setup system clock at 80MHz from PLL with Crystal
+                        SYSCTL_OSC_MAIN);  // Setup system clock at 40MHz from PLL with Crystal
 }
 
 //------------------Clock_set_80MHz---------------------------
 // Configure system clock to run at 80MHZ settings
 // Input: None
 // Output: None
-void Clock_set_80MHz(void);
+void Clock_set_80MHz(void){
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|
+                            SYSCTL_OSC_MAIN);  // Setup system clock at 80MHz from PLL with Crystal
+}
 
 //------------------Clock_get_frequency---------------------------
 // Get Current clock frequency
@@ -479,6 +486,18 @@ void Logger_Init(uint32_t LoggerFreq, int BaudRate){
         TimerEnable(TIMER2_BASE, TIMER_A);
 }
 
+//
+void print_loadCell(){
+    int rawLoadCellVal, log_dir;
+    uint32_t log_duty;
+    loggerCount++;
+
+    log_duty = getglobalduty();
+    log_dir = getglobaldirection();
+    rawLoadCellVal = getLoadCellValue();
+    UARTprintf("%d, %d, %d, %d\n", loggerCount, rawLoadCellVal, log_duty, log_dir);
+}
+
 //------------------LoggerIntHandler()---------------------------
 //Interrupt Handler for the Logger
 //Input: None
@@ -486,8 +505,7 @@ void Logger_Init(uint32_t LoggerFreq, int BaudRate){
 void LoggerIntHandler(void){
     TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
 
-    globalDummy += 1;
-    UARTprintf("%d \n", globalDummy);
+    print_loadCell();
 
 }
 
@@ -634,216 +652,12 @@ uint32_t convert2F(uint32_t TempAvg){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void doSomethingforlogging(){
-//only for conversions
-int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
-int sign = 1;
-double loadCellOut, error, OutDuty, gDuty;
-
-//Measure Load Cell value
-loadCellOut = measuredLoad();
-intload = loadCellOut;
-fracload = (loadCellOut - intload)*1000;
-
-//Measure Error
-error = getError();
-if(error<0){
-    sign = -1;
-    error = error*sign;
-}
-intErr = error*sign;
-fracErr = (error-intErr)*1000;
-
-//PWM output
-OutDuty = getPIDoutput();
-if(OutDuty<0){
-    sign = -1;
-    OutDuty = OutDuty*sign;
-}
-intPWM = OutDuty*sign;
-fracPWM = (OutDuty-intPWM)*1000;
-
-//Direction
-dir = getglobaldirection();
-
-//Global duty
-gDuty = getglobalduty();
-intgDuty = gDuty;
-fracgDuty = (gDuty-intgDuty)*1000;
-
-UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------LoadCell_init()---------------------------
-//Initialize the Load Cell input on Board
-// Load Cell connected to PE3, ADC0, seq 3
-//Input: None
-//Output: None
-void LoadCell_init(){
-
-    //Enable Peripherals
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-    SysCtlDelay(2);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
-    SysCtlDelay(2);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    SysCtlDelay(2);
-
-    // Configure PE3 as ADC input
-    GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3);
-
-    //ADC0
-    ADCHardwareOversampleConfigure(ADC0_BASE, 16); //Average 4 readings
-    //ADCReferenceSet(ADC0_BASE, ADC_REF_INT);
-    ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
-    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
-
-    //Config: produce interrupt when step is complete
-    ADCSequenceEnable(ADC0_BASE, 3); // Enable sequencer 3
-
-    // Interrupt enable
-    ADCIntClear(ADC0_BASE, 3);
-    ADCIntEnable(ADC0_BASE, 3);
-    IntEnable(INT_ADC0SS3);
-
-    //Timer0
-    // It acts as the trigger source
-    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
-    samplePeriod = SysCtlClockGet()/sampleFreq;
-    TimerLoadSet(TIMER0_BASE, TIMER_A, samplePeriod-1);
-    TimerControlTrigger(TIMER0_BASE, TIMER_A, true);
-    TimerEnable(TIMER0_BASE, TIMER_A);
-}
-
-//------------------getLoadCellValue()---------------------------
-//Get Load Cell Value
-//Input: None
-//Output: Load Cell value ADC units
-uint32_t getLoadCellValue(){
-    return loadCellValue[0];
-}
-
-//------------------measuredLoad()---------------------------
-//Get Load Cell Value
-//Input: None
-//Output: Load Cell value in pounds
-double measuredLoad(void){
-    uint32_t loadADC;
-    double OutputLoad;
-
-    loadADC = getLoadCellValue();
-    OutputLoad = Vol2Load(adc2Vol(loadADC));
-    return OutputLoad;
-}
-
-//------------------getLoadCellValue()---------------------------
-//Get Load Cell Value
-//Input: None
-//Output: Load Cell value
-double adc2Vol(uint32_t adcRead){
-    double output;
-    output = ((adcRead*3.3)/4095);
-    return output;
-}
-
-//------------------Vol2Load()---------------------------
-//Covert raw voltage value to force in pound
-//Input: Raw Volage
-//Output: Pound
-double Vol2Load(double vol){
-    double output;
-    output = vol*25.0;
-    return output;
-}
-//Interrupts
-// Timer 0A is being used to trigger load cell ADC
-void LoadCellTrigger(void){
-    TimerIntClear(ADC0_BASE, 3);
-}
-
-// Handler for ADC Load cell
-void LoadCellIntHandler(void){
-    ADCIntClear(ADC0_BASE, 3);
-   // while(!ADCIntStauts(ADC0_BASE, 3, false)){}
-    ADCSequenceDataGet(ADC0_BASE, 3, loadCellValue);
-}
-
 // ********************************************************
 // ********************* Motor ****************************
 // ********************************************************
 //------------------Motor_Init()---------------------------
 //Initialize the Motor
-//Input: None
+//Input: PWM frequency desired
 //Output: None
 void Motor_Init(uint32_t PWMFreq){
 
@@ -883,14 +697,14 @@ void Motor_Init(uint32_t PWMFreq){
 //Input: Target Duty Cycle 0-100 (percent)
 //Output: None
 void Motor_SetDuty(uint32_t dutyCycle){
-    pwmDuty = dutyCycle*((float)getMotorPWMPeriod()/100);
+    pwmDuty = convert2PWMDuty(dutyCycle);
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, pwmDuty);
 }
 
 
 //------------------convert2PWMDuty()---------------------------
 //Set Duty cycle for the motor
-//Input: Target Duty Cycle (in percent - 0:100)
+//Input: Target Duty Cycle (in percent - 0-100)
 //Output: Command to send to PWM
 double convert2PWMDuty(uint32_t dutyCycle){
     pwmDuty = ((float)dutyCycle/100)*(getMotorPWMPeriod());
@@ -899,11 +713,12 @@ double convert2PWMDuty(uint32_t dutyCycle){
 
 //------------------motorSendCommand()---------------------------
 //Sends the final commands to the motor driver
+// If duty cycle is 0, motor stops
 //Input: duty cycle, direction
 //Output: None
 void motorSendCommand(uint32_t dutyCycle, int direction){
     double dutyCycleApplied = convert2PWMDuty(dutyCycle);
-    setglobals4Motor(dutyCycleApplied, direction);
+    setglobals4Motor(dutyCycle, direction);
 
     if(direction == 0){
         clearDirection();
@@ -968,16 +783,16 @@ void disableMotor(){
 //Set global variable duty and direction
 //Input: Duty cycle, Direction
 //Output: None
-void setglobals4Motor(double duty, int direction){
-    globalDutyCycle = duty;
-    globalDirection = direction;
+void setglobals4Motor(uint32_t duty, int direction){
+        globalDirection = direction;
+        globalDutyCycle = duty;
 }
 
 //------------------getglobalduty()---------------------------
 //Get global variable duty and direction
 //Input: None
 //Output: Duty cycle
-double getglobalduty(void){
+uint32_t getglobalduty(void){
     return globalDutyCycle;
 }
 
@@ -1008,14 +823,196 @@ void checkLimits(double duty){
     motorSendCommand(duty, direction);
 }
 
+// ********************************************************
+// ****************** Load cell **************************
+// ********************************************************
+//------------------LoadCell_init()---------------------------
+//Initialize the Load Cell input on Board
+// Load Cell connected to PE3, ADC0, seq 3
+//Input: None
+//Output: None
+void LoadCell_init(int hardwareAveraging, int ADCsampleFreq){
+
+    //Enable Peripherals
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+    SysCtlDelay(2);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    SysCtlDelay(2);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    SysCtlDelay(2);
+
+    // Configure PE3 as ADC input
+    GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3);
+
+    //ADC0
+    if(hardwareAveraging > 0){
+        ADCHardwareOversampleConfigure(ADC0_BASE, hardwareAveraging); //Average n readings
+    }
+    //ADCReferenceSet(ADC0_BASE, ADC_REF_INT);
+    ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
+    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
+
+    //Config: produce interrupt when step is complete
+    ADCSequenceEnable(ADC0_BASE, 3); // Enable sequencer 3
+
+    // Interrupt enable
+    ADCIntClear(ADC0_BASE, 3);
+    ADCIntEnable(ADC0_BASE, 3);
+    IntEnable(INT_ADC0SS3);
+
+    //Timer0
+    // It acts as the trigger source
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
+    samplePeriod = SysCtlClockGet()/ADCsampleFreq;
+    TimerLoadSet(TIMER0_BASE, TIMER_A, samplePeriod-1);
+    TimerControlTrigger(TIMER0_BASE, TIMER_A, true);
+    TimerEnable(TIMER0_BASE, TIMER_A);
+}
+
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value ADC units
+uint32_t getLoadCellValue(){
+    return loadCellValue[0];
+}
+
+//------------------measuredLoad()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value in pounds
+double measuredLoad(void){
+    uint32_t loadADC;
+    double OutputLoad;
+
+    loadADC = getLoadCellValue();
+    OutputLoad = Vol2Load(adc2Vol(loadADC));
+    return OutputLoad;
+}
+
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value
+double adc2Vol(uint32_t adcRead){
+    double output;
+    output = ((adcRead*3.3)/4095);
+    return output;
+}
+
+//------------------Vol2Load()---------------------------
+//Covert raw voltage value to force in pound
+//Input: Raw Volage
+//Output: Pound
+double Vol2Load(double vol){
+    double output;
+    output = vol*25.0;
+    return output;
+}
+//Interrupts
+// Timer 0A is being used to trigger load cell ADC
+void LoadCellTrigger(void){
+    TimerIntClear(ADC0_BASE, 3);
+}
+
+// Handler for ADC Load cell
+void LoadCellIntHandler(void){
+    ADCIntClear(ADC0_BASE, 3);
+   // while(!ADCIntStauts(ADC0_BASE, 3, false)){}
+    ADCSequenceDataGet(ADC0_BASE, 3, loadCellValue);
+}
 
 // ********************************************************
 // ****************** Controller **************************
 // ********************************************************
 //------------------Force control loop --------------------
+//------------------Controller_Init()---------------------------
+//Initializes a timer routine for the controller
+//Input: None
+//Output: None
+void Controller_Init(uint32_t Controllerfreq){
+
+        uint32_t periods; // Timer delays
+        TOTAL_ERROR = 0;
+        setGoalFlag(0);
+
+        //Configure Timer
+        SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
+        // wait for timer module 1 to be ready
+        while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER1))
+            {
+            }
+
+        TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC);
+
+        // set timer 1 to run off of system clock
+       // TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
+
+        // Define period
+        periods = (SysCtlClockGet()/Controllerfreq);
+        //periods = (clockFreq/Controllerfreq);
+        TimerLoadSet(TIMER1_BASE, TIMER_A, periods-1);
+
+        // register the timer interrupt service routine
+        TimerIntRegister(TIMER1_BASE, TIMER_A, *ControllerIntHandler);
+
+        // clear rollover interrupt and then enable it
+        TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+        TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+
+        IntEnable(INT_TIMER1A);
+}
+
+//------------------ControllerIntHandler()---------------------------
+//Interrupt handler for the controller
+//Input: None
+//Output: None
 void ControllerIntHandler(void){
     TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 
+    // feed forward leg swing
+    Swing_control();
+    // PID_control();
+
+}
+
+//------------------Swing_control()---------------------------
+//Implement simple feedforward swing motion on leg
+//Input: None
+//Output: None
+void Swing_control(void){
+    swingloopCount++;
+    if(swingloopCount > 3000){
+        swingDir = !swingDir;
+        swingloopCount = 0;
+        RGBled_Toggle(0, 0, 1);
+    }
+    motorSendCommand(swingDuty, swingDir);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void PID_conrol(){
     //check if goal reached
     if(~getGoalFlag()){
 
@@ -1043,41 +1040,6 @@ void ControllerIntHandler(void){
         PID_OUT = 0;
     }
     checkLimits(PID_OUT);
-}
-
-//------------------Controller_Init()---------------------------
-//Initializes a timer routine for the controller
-//Input: None
-//Output: None
-void Controller_Init(uint32_t Controllerfreq){
-        uint32_t periods; // Timer delays
-        TOTAL_ERROR = 0;
-        setGoalFlag(0);
-        //Configure Timer
-        SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
-        // wait for timer module 1 to be ready
-        while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER1))
-            {
-            }
-
-        TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC);
-
-        // set timer 1 to run off of system clock
-       // TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
-
-        // Define period
-        periods = (SysCtlClockGet()/Controllerfreq);
-        //periods = (clockFreq/Controllerfreq);
-        TimerLoadSet(TIMER1_BASE, TIMER_A, periods-1);
-
-        // register the timer interrupt service routine
-        TimerIntRegister(TIMER1_BASE, TIMER_A, *ControllerIntHandler);
-
-        // clear rollover interrupt and then enable it
-        TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-        TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-
-        IntEnable(INT_TIMER1A);
 }
 
 //------------------ControllerEnable()---------------------------
@@ -1172,4 +1134,43 @@ double getPIDoutput(void){
 }
 
 
+void doSomethingforlogging(){
+//only for conversions
+int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
+int sign = 1;
+double loadCellOut, error, OutDuty, gDuty;
 
+//Measure Load Cell value
+loadCellOut = measuredLoad();
+intload = loadCellOut;
+fracload = (loadCellOut - intload)*1000;
+
+//Measure Error
+error = getError();
+if(error<0){
+    sign = -1;
+    error = error*sign;
+}
+intErr = error*sign;
+fracErr = (error-intErr)*1000;
+
+//PWM output
+OutDuty = getPIDoutput();
+if(OutDuty<0){
+    sign = -1;
+    OutDuty = OutDuty*sign;
+}
+intPWM = OutDuty*sign;
+fracPWM = (OutDuty-intPWM)*1000;
+
+//Direction
+dir = getglobaldirection();
+
+//Global duty
+gDuty = getglobalduty();
+intgDuty = gDuty;
+fracgDuty = (gDuty-intgDuty)*1000;
+
+UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
+
+}

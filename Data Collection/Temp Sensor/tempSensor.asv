@@ -1,0 +1,10 @@
+% Read file
+
+F = readtable('hardwareAvg_2.csv');
+
+samples = F.Sample_float;
+temp_samples = str2double(samples);
+data = F.Data_float;
+temp_adc = str2double(data);
+
+%plot(samples{:,1}, temp{:,1});plot(temp_samp

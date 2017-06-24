@@ -109,6 +109,9 @@
 #include "driverlib/adc.h"
 #include "driverlib/debug.h"
 
+// ********************************************************
+// *************** Clock and timing ***********************
+// ********************************************************
 //------------------Clock_set_40MHz---------------------------
 // Configure system clock to run at 40MHZ settings
 // Input: None
@@ -145,6 +148,9 @@ void Delay_cycle(uint32_t delay);
 // Input: ms
 void delayMS(int);
 
+// ********************************************************
+// *************** LEDs and Buttons ***********************
+// ********************************************************
 // ----------------BlueLED_Init-----------------------
 // Initializes the Blue LED on PD7
 // Input: None
@@ -227,11 +233,18 @@ void RGBled_Set(uint8_t red, uint8_t green, uint8_t blue);
 // Output: None
 void RGBled_Toggle(uint8_t red, uint8_t green, uint8_t blue);
 
+// ********************************************************
+// ******************* Timers *****************************
+// ********************************************************
 //------------------initTimer0---------------------------
 //Initialize Timer0A as a periodic timer
 //Input: frequency
 //Output: None
 void initTimer0(int frequency);
+
+// ********************************************************
+// *************** Console & Logger ***********************
+// ********************************************************
 
 //------------------initConsole()---------------------------
 //Initialize the serial monitor using UART, uses the Utilities library as well
@@ -276,6 +289,9 @@ void SerialMonitor_Loop(void);
 //Output: None
 void SerialMonitor_Receive(void);
 
+// ********************************************************
+// *************** Temperature Sensor *********************
+// ********************************************************
 
 //------------------tempSensor_init()---------------------------
 //Initialize the Temperature Sensor on Board
@@ -312,47 +328,6 @@ uint32_t convert2C(uint32_t);
 //Input: None
 //Output: None
 uint32_t convert2F(uint32_t);
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------LoadCell_init()---------------------------
-//Initialize the Load Cell input on Board
-//Input: None
-//Output: None
-void LoadCell_init(void);
-
-//------------------getLoadCellValue()---------------------------
-//Get Load Cell Value
-//Input: None
-//Output: Load Cell value ADC units
-uint32_t getLoadCellValue(void);
-
-//------------------measuredLoad()---------------------------
-//Get Load Cell Value
-//Input: None
-//Output: Load Cell value in pounds
-double measuredLoad(void);
-
-//------------------adc2Vol()---------------------------
-//Covert raw ADC value to Voltage
-//Input: Raw ADC
-//Output: Voltage
-double adc2Vol(uint32_t);
-
-//------------------Vol2Load()---------------------------
-//Covert raw voltage value to force in pound
-//Input: Raw Volage
-//Output: Pound
-double Vol2Load(double);
 
 // ********************************************************
 // ********************* Motor ****************************
@@ -415,13 +390,13 @@ void disableMotor(void);
 //Set global variable duty and direction
 //Input: Duty cycle, Direction
 //Output: None
-void setglobals4Motor(double duty, int direction);
+void setglobals4Motor(uint32_t duty, int direction);
 
 //------------------getglobalduty()---------------------------
 //Get global variable duty and direction
 //Input: None
 //Output: Duty cycle
-double getglobalduty(void);
+uint32_t getglobalduty(void);
 
 //------------------getglobaldirection()---------------------------
 //Get global variable duty and direction
@@ -435,11 +410,66 @@ int getglobaldirection(void);
 //Output: None
 void checkLimits(double duty);
 
+// ********************************************************
+// ****************** Load cell **************************
+// ********************************************************
+
+//------------------LoadCell_init()---------------------------
+//Initialize the Load Cell input on Board
+//Input: Hardware averaging, ADCsampleFreq sets the timer trigger freq
+//Output: None
+void LoadCell_init(int hardwareAveraging, int ADCsampleFreq);
+
+//------------------getLoadCellValue()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value ADC units
+uint32_t getLoadCellValue(void);
+
+//------------------measuredLoad()---------------------------
+//Get Load Cell Value
+//Input: None
+//Output: Load Cell value in pounds
+double measuredLoad(void);
+
+//------------------adc2Vol()---------------------------
+//Covert raw ADC value to Voltage
+//Input: Raw ADC
+//Output: Voltage
+double adc2Vol(uint32_t);
+
+//------------------Vol2Load()---------------------------
+//Covert raw voltage value to force in pound
+//Input: Raw Volage
+//Output: Pound
+double Vol2Load(double);
+
+
 //------------------Controller_Init()---------------------------
 //Initializes a timer routine for the controller
-//Input: None
+//Input: Controller Frequency
 //Output: None
 void Controller_Init(uint32_t Controllerfreq);
+
+//------------------ControllerIntHandler()---------------------------
+//Interrupt handler for the controller
+//Input: None
+//Output: None
+void ControllerIntHandler(void);
+
+//------------------Swing_control()---------------------------
+//Implement simple feedforward swing motion on leg
+//Input: None
+//Output: None
+void Swing_control(void);
+
+//------------------PID_conrol()---------------------------
+//PID control function
+//Input: None
+//Output: None
+void PID_conrol(void);
+
+
 
 //------------------ControllerEnable()---------------------------
 //Enable Timer 1A

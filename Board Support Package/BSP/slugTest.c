@@ -1,29 +1,17 @@
-#include <stdint.h>
-#include "slug.h"
-#include "utils/uartstdio.h"
 
-uint32_t raw, tempC, tempF, i = 0;
+// slugTest.c
+// Defines tests for every perigperal on the BSP
+// Add the slug.c and slug.h file in the same folder
+// Function declarations in slugTes.h
 
-void testBlueLED(void);
-void testBYellowLED(void);
-void testTivaLED_Switch(void);
-void testTimerToggle(void);
-void testConsole(void);
-void testLogger(void);
+// Author : Shriya Shah
+#include "slugTest.h"
 
-
-
-void testTempSensor(void);
-void testSerialMonitor(void);
-void testSerialMonitor2(void);
-void testloadCellAmplifier(void);
-void testMotor(void);
-void testController(void);
 
 int main(void){
 
-    // Initialize clock at 40 MHZ frequency
-    Clock_set_40MHz();
+    // Initialize clock at 80 MHZ frequency
+    Clock_set_80MHz();
 
     // Test LED - Blue
     //testBlueLED();
@@ -40,29 +28,20 @@ int main(void){
     // Test Console
     //testConsole();
 
-    // test logger
+    // Test logger
     //testLogger();
 
-    // 3. Test Temperature Sensor
-    testTempSensor();
+    // Test Temperature Sensor
+    //testTempSensor();
 
-
-
-
-
-
-    // 4. Test UART functionality
-    //testSerialMonitor();
-    //testSerialMonitor2();
-
-    // 5. Test Load Cell Amplifier
-    //testloadCellAmplifier();
-
-    // 6. Test DC Motor
+    // Test DC Motor
     //testMotor();
 
-    //7. Test Controller
-    //testController();
+    // Test Load Cell
+    //testloadCell();
+
+    // Test Controller
+    testController();
 
 }
 
@@ -176,9 +155,10 @@ void testTimerToggle(){
 // Use the printf facility
 //----------------------------------------------------------------------------
 void testConsole(){
-    int BaudRate  = 115200;
     bool flag = 1;
     int i = 0;
+
+    int BaudRate  = 115200;
     initConsole(BaudRate);
 
     UARTprintf("System Startup");
@@ -216,6 +196,18 @@ void testLogger(){
 }
 
 //----------------------------------------------------------------------------
+// Test the Serial Monitor Connection with the computer
+// Uses the microUSB port on TIVA, has an ISR
+//----------------------------------------------------------------------------
+void testSerialMonitor(){
+    SerialMonitor_Init();
+
+    while(1){
+        //SerialMonitor_Loop();
+    }
+}
+
+//----------------------------------------------------------------------------
 // Test Temperature sensor on ADC0
 // On Interrupt with Serial Monitor connected
 //----------------------------------------------------------------------------
@@ -233,114 +225,87 @@ void testTempSensor(){
         //Trigger temp read
         tempSensor_startConversion();
 
-        //print temperature every 2 second
-        //if(++i == 2000){
-            i = 0;
-            raw = getAvgTemp();
-            tempC = convert2C(raw);
-            tempF = convert2F(raw);
-            UARTprintf("Avg temp is: %4d, *C is: %4d, *F is: %4d\n", raw, tempC, tempF);
-        //}
+        raw = getAvgTemp();
+        tempC = convert2C(raw);
+        tempF = convert2F(raw);
+        UARTprintf("Avg temp is: %4d, *C is: %4d, *F is: %4d\n", raw, tempC, tempF);
         delayMS(1);
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------------
-// Test the Serial Monitor Connection with the computer
-// Uses the microUSB port on TIVA, has an ISR
+// Test Motor
+// On a while loop that achieves full leg swing on THOR
 //----------------------------------------------------------------------------
-void testSerialMonitor(){
-    SerialMonitor_Init();
+void testMotor(){
+    uint32_t pwmFreq = 10000; // 10KHz
+    Motor_Init(pwmFreq);
 
     while(1){
-        //SerialMonitor_Loop();
+        motorSendCommand(10, 1);
+        delayMS(1000);
+        motorSendCommand(10, 0);
+        delayMS(1000);
     }
+
 }
 
+//----------------------------------------------------------------------------
+// Test LoadCell
+// RRecord the data from load cell
+//----------------------------------------------------------------------------
 
-void testloadCellAmplifier(){
-    uint32_t sensorVal;
-    float vol;
-    //initConsole();
-    LoadCell_init();
+void testloadCell(){
+    int hardwareAveraging, ADCsampleFreq;
+
+    hardwareAveraging = 4;
+    ADCsampleFreq = 500; //500 Hz
+
+    LoadCell_init(hardwareAveraging, ADCsampleFreq);
     EnableInterrupts();
 
-    UARTprintf("\n Recording Load cell Sensor: \n");
-
     while(1){
-        sensorVal = getLoadCellValue();
-        vol = adc2Vol(sensorVal);
-        UARTprintf("Temp Sensor reading is: %04u, vol is: %d\n", sensorVal, (uint32_t)vol);
+        rawLoadCellVal = getLoadCellValue();
+        LoadCellVol = adc2Vol(rawLoadCellVal);
         delayMS(1);
     }
 }
 
-void testMotor(){
-   // initConsole();
-    uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
-    Motor_Init(period); // Initialize with 10KHZ
-
-    UARTprintf("\n Test Motor \n");
-
-    while(1){
-        enableMotor();
-        Motor_SetDuty(.01);
-        delayMS(1000);
-        disableMotor();
-        delayMS(1000);
-    }
-
-}
+//----------------------------------------------------------------------------
+// Test Controller
+// Record the data from load cell and apply feedforward trajectory to motor
+//----------------------------------------------------------------------------
 
 void testController(){
-   // initConsole();
-    //uint32_t period = 2000; //clock/freq: 20MHz/10KHZ
-    //Motor_Init(period); // Initialize with 10KHZ
+    // Initialize Console
+    int BaudRate  = 115200;
+    uint32_t loggerFreq = 100; //100 Hz
+    Logger_Init(loggerFreq, BaudRate);
 
-    RGBled_Init(1,1,1);
-    uint32_t controllerFreq = 10; //10kHZ
+    // Initialize motor
+    uint32_t pwmFreq = 20000; // 20KHz
+    Motor_Init(pwmFreq);
+
+    // Initialize Load Cell
+    int hardwareAveraging, ADCsampleFreq;
+    hardwareAveraging = 4;
+    ADCsampleFreq = 500; //500 Hz
+    LoadCell_init(hardwareAveraging, ADCsampleFreq);
+
+
+    // Initialize controller
+    uint32_t controllerFreq = 2000; //2kHZ
     Controller_Init(controllerFreq);
-    EnableInterrupts();
     ControllerEnable();
 
-    UARTprintf("\n Test Controller \n");
+    // Enable all interrupts and channels
+    EnableInterrupts();
+
+    // For debugging
+    RGBled_Init(0, 0, 1); //Blue
 
     while(1){
-
+        // Do nothing
     }
-
 }
 
