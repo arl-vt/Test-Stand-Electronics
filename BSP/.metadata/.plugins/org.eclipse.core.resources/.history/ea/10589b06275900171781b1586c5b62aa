@@ -504,6 +504,7 @@ void print_loadCell(){
 //Output: None
 void LoggerIntHandler(void){
     TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
+
     print_loadCell();
 
 }
@@ -971,6 +972,7 @@ void ControllerIntHandler(void){
 
     // feed forward leg swing
     Swing_control();
+    // PID_control();
 
 }
 

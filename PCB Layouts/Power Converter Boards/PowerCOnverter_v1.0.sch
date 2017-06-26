@@ -6760,6 +6760,8 @@ Source: http://www.osram.convergy.de/</description>
 </library>
 </libraries>
 <attributes>
+<attribute name="CNAME" value="ARL"/>
+<attribute name="DESIGNER" value="SHRIYA SHAH"/>
 </attributes>
 <variantdefs>
 </variantdefs>

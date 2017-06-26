@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Controller" key="selection"/>
+		<item value="Logger" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="logger"/>
 			<item value="controller"/>
-			<item value="RGB"/>
-			<item value="goalReached"/>
-			<item value="measuredLoad"/>
-			<item value="goalPos"/>
-			<item value="getGoalForce"/>
-			<item value="setGoalForce"/>
-			<item value="checkLimits"/>
+			<item value="swingDuty"/>
+			<item value="globaldirection"/>
+			<item value="setglobals4Motor"/>
+			<item value="globalDutyCycle"/>
+			<item value="setglobals"/>
+			<item value="getglobalduty"/>
 		</list>
 		<list key="replacehistory">
 			<item value="DEADBAND"/>
