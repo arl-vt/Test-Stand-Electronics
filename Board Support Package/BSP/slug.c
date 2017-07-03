@@ -106,6 +106,7 @@ const int BIAS = 5; //5% duty bias
 uint16_t samplePeriod; //For load cell sampling period calculation
 uint32_t rawTemp[1];
 uint32_t loadCellValue[1];
+uint32_t ADCValue[1];
 
 volatile uint32_t goalReached; //flag
 
@@ -128,13 +129,30 @@ volatile double P, D, I;
 
 //PID VALUES
 volatile double Kp; //P from PID 20
-volatile double Kbar = .1; //P from PID 0.08
-volatile double Ki = 0.01; //.01; //I from PID 1
+volatile double Kbar = .04; //P from PID 0.1
+volatile double Ki = 0.008; //.01; //I from PID 1
 volatile double Kd = 0.0; //D from PID
 
 // *********Globals******************************
 uint32_t globalDutyCycle = 0;
 int globalDirection = 0;
+
+uint32_t globalControllerFreq;
+uint32_t globalControllerTick;
+volatile double globalControllerPeriod;
+
+// ******* MRAC Control *********************
+volatile double theta_x, theta_r;
+volatile double theta_x_final, theta_r_final;
+volatile double theta_x_prev = 0;
+volatile double theta_r_prev = 0;
+volatile double MRAC_OUT = 0;
+
+volatile double ref_sys, time, delta_t, x_ref, x;
+
+// GAins
+volatile double gamma_x = 0.01; //0.1
+volatile double gamma_r = 0.001; //0.01
 
 uint32_t globalDummy = 0;
 
@@ -484,6 +502,8 @@ void Logger_Init(uint32_t LoggerFreq, int BaudRate){
         IntEnable(INT_TIMER2A);
 
         TimerEnable(TIMER2_BASE, TIMER_A);
+
+        loggerCount = 0;
 }
 
 //
@@ -504,7 +524,10 @@ void print_loadCell(){
 //Output: None
 void LoggerIntHandler(void){
     TimerIntClear(TIMER2_BASE, TIMER_TIMA_TIMEOUT);
-    print_loadCell();
+    //print_loadCell();
+    //logger_PID_ForceControl();
+    //logPID();
+    logger_Adaptive_ForceControl();
 
 }
 
@@ -848,16 +871,16 @@ void LoadCell_init(int hardwareAveraging, int ADCsampleFreq){
         ADCHardwareOversampleConfigure(ADC0_BASE, hardwareAveraging); //Average n readings
     }
     //ADCReferenceSet(ADC0_BASE, ADC_REF_INT);
-    ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
-    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
+    ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
+    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH0|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
 
     //Config: produce interrupt when step is complete
-    ADCSequenceEnable(ADC0_BASE, 3); // Enable sequencer 3
+    ADCSequenceEnable(ADC0_BASE, 1); // Enable sequencer 3
 
     // Interrupt enable
-    ADCIntClear(ADC0_BASE, 3);
-    ADCIntEnable(ADC0_BASE, 3);
-    IntEnable(INT_ADC0SS3);
+    ADCIntClear(ADC0_BASE, 1);
+    ADCIntEnable(ADC0_BASE, 1);
+    IntEnable(INT_ADC0SS1);
 
     //Timer0
     // It acts as the trigger source
@@ -911,14 +934,15 @@ double Vol2Load(double vol){
 //Interrupts
 // Timer 0A is being used to trigger load cell ADC
 void LoadCellTrigger(void){
+    TimerIntClear(ADC0_BASE, 1);
     TimerIntClear(ADC0_BASE, 3);
 }
 
 // Handler for ADC Load cell
 void LoadCellIntHandler(void){
-    ADCIntClear(ADC0_BASE, 3);
+    ADCIntClear(ADC0_BASE, 1);
    // while(!ADCIntStauts(ADC0_BASE, 3, false)){}
-    ADCSequenceDataGet(ADC0_BASE, 3, loadCellValue);
+    ADCSequenceDataGet(ADC0_BASE, 1, loadCellValue);
 }
 
 // ********************************************************
@@ -934,6 +958,9 @@ void Controller_Init(uint32_t Controllerfreq){
         uint32_t periods; // Timer delays
         TOTAL_ERROR = 0;
         setGoalFlag(0);
+
+        setGlobalControllerFreq(Controllerfreq);
+        setGlobalControllerTicks(0);
 
         //Configure Timer
         SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
@@ -970,8 +997,42 @@ void ControllerIntHandler(void){
     TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 
     // feed forward leg swing
-    Swing_control();
+    //PID_control();
 
+    Adaptive_control();
+
+}
+
+//------------------setGlobalControllerFreq()---------------------------
+//Set global variable controller freq
+//Input: Controller freq
+//Output: None
+void setGlobalControllerFreq(uint32_t controllerFreq){
+    globalControllerFreq = controllerFreq;
+}
+
+//------------------getGlobalControllerFreq()---------------------------
+//Get global variable controller freq
+//Input: None
+//Output: Controller freq
+uint32_t getGlobalControllerFreq(){
+    return globalControllerFreq;
+}
+
+//------------------setGlobalControllerTicks()---------------------------
+//Set global variable controller tick
+//Input: Controller tick
+//Output: None
+void setGlobalControllerTicks(uint32_t controllerTick){
+    globalControllerTick = controllerTick;
+}
+
+//------------------getGlobalControllerTicks()---------------------------
+//Get global variable controller tick
+//Input: None
+//Output: Controller tick
+uint32_t getGlobalControllerTicks(){
+    return globalControllerTick;
 }
 
 //------------------Swing_control()---------------------------
@@ -988,29 +1049,11 @@ void Swing_control(void){
     motorSendCommand(swingDuty, swingDir);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void PID_conrol(){
+//------------------PID_conrol()---------------------------
+//PID control function
+//Input: None
+//Output: None
+void PID_control(void){
     //check if goal reached
     if(~getGoalFlag()){
 
@@ -1040,6 +1083,71 @@ void PID_conrol(){
     checkLimits(PID_OUT);
 }
 
+//------------------Adaptive_control()---------------------------
+//Adaptive control function
+//Input: None
+//Output: None
+void Adaptive_control(){
+    //double ref_sys, time, delta_t, x_ref, x;
+    uint32_t controllerfrequency;
+
+    controllerfrequency = getGlobalControllerFreq();
+    setGlobalControllerTicks(getGlobalControllerTicks()+1);
+
+    delta_t = getControllerTimePeriod(controllerfrequency);
+
+    time = GetSystemTime(getGlobalControllerTicks(), delta_t); //in ms
+
+    // Ref system output
+    ref_sys = exp(-5.0*time)*delta_t;
+    x_ref = ref_sys*getGoalForce();
+
+    //Plant output
+    x = measuredLoad();
+
+    //Error
+    ERROR = x - x_ref;
+
+    //Theta update
+    theta_x = -gamma_x*ERROR*x*Sgn(MRAC_OUT);
+    theta_r = -gamma_r*ERROR*getGoalForce()*Sgn(MRAC_OUT);
+
+    theta_x_final = (theta_x - theta_x_prev)/delta_t;
+    theta_r_final = (theta_r - theta_r_prev)/delta_t;
+
+    theta_x_prev = theta_x;
+    theta_r_prev = theta_r;
+
+    // Calculate output
+    MRAC_OUT = theta_x_final*x + theta_r_final*getGoalForce();
+
+    // Send output
+    checkLimits(MRAC_OUT);
+
+}
+
+//------------------getControllerTimePeriod()---------------------------
+//Get time period of controller in seconds
+//Input: Controller frequency
+//Output: Time period in second
+double getControllerTimePeriod(uint32_t controllerFreq){
+//    int intF;
+//    double doubF;
+//    intF = 1/controllerFreq;
+//    doubF = (1/controllerFreq - intF)*1000;
+//    UARTprintf("%d%.4d\n", intF, doubF);
+    globalControllerPeriod = (1.0/(double)controllerFreq); //in s
+    return globalControllerPeriod;
+}
+
+//------------------GetSystemTime()---------------------------
+//Get time since the system started
+//Input: Controller ticks, controller time period,
+//Output: Time period in second
+double GetSystemTime(uint32_t controllerTick, double delta_t){
+    return controllerTick*delta_t;
+}
+
 //------------------ControllerEnable()---------------------------
 //Enable Timer 1A
 //Input: None
@@ -1049,6 +1157,17 @@ void ControllerEnable(){
     TimerEnable(TIMER1_BASE, TIMER_A);
 }
 
+//------------------Sgn()---------------------------
+//Return sign
+//Input: Number
+//Output: None
+int Sgn(double number){
+    if (number < 0){
+        return -1;
+    }else{
+        return 1;
+    }
+}
 
 //------------------checkIntegralLimit()---------------------------
 //Wrap up integral Error
@@ -1131,12 +1250,27 @@ double getPIDoutput(void){
     return PID_OUT;
 }
 
+//------------------getMRACoutput()---------------------------
+//Get output in MRAC
+//Input: None
+//Output: out
+double getMRACoutput(void){
+    return MRAC_OUT;
+}
 
-void doSomethingforlogging(){
+
+
+//------------------logger_PID_ForceControl()---------------------------
+//Logger function to be called for logging data for force control PID
+//Input: None
+//Output: None
+void logger_PID_ForceControl(){
 //only for conversions
 int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
 int sign = 1;
 double loadCellOut, error, OutDuty, gDuty;
+
+//loggerCount++;
 
 //Measure Load Cell value
 loadCellOut = measuredLoad();
@@ -1161,14 +1295,136 @@ if(OutDuty<0){
 intPWM = OutDuty*sign;
 fracPWM = (OutDuty-intPWM)*1000;
 
-//Direction
-dir = getglobaldirection();
+////Direction
+//dir = getglobaldirection();
+//
+////Global duty
+//gDuty = getglobalduty();
+//intgDuty = gDuty;
+//fracgDuty = (gDuty-intgDuty)*1000;
 
-//Global duty
-gDuty = getglobalduty();
-intgDuty = gDuty;
-fracgDuty = (gDuty-intgDuty)*1000;
+UARTprintf("%d.%2d, %d.%2d, %d.%2d \n", intload, fracload, intPWM, fracPWM, intErr, fracErr);
 
-UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
+//UARTprintf("%d.%3d, %d.%3d, %d.%3d, %d, %d, %d.%3d\n", intload, fracload,intErr, fracErr, intPWM, fracPWM, dir, getGoalFlag(), intgDuty, fracgDuty);
+}
 
+//------------------tempSensor_init()---------------------------
+//Initialize the Temperature Sensor on Board, processor triggered
+//Input: hardwareAverage (can be 2,4,8,16,32 or 64)
+//Output: None
+void addADC_Init(int hardwareAveraging, int ADCsampleFreq){
+
+    // Configure PE3 as ADC input
+    GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_2);
+
+    //ADC0
+    if(hardwareAveraging > 0){
+        ADCHardwareOversampleConfigure(ADC0_BASE, hardwareAveraging); //Average n readings
+    }
+    //ADCReferenceSet(ADC0_BASE, ADC_REF_INT);
+    ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_TIMER, 0); //Base, Seq Num, Trigger source, Priority
+    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH1|ADC_CTL_IE|ADC_CTL_END); // Base, Seq Num, Step, Config
+
+    //Config: produce interrupt when step is complete
+    ADCSequenceEnable(ADC0_BASE, 3); // Enable sequencer 3
+
+    // Interrupt enable
+    ADCIntClear(ADC0_BASE, 3);
+    ADCIntEnable(ADC0_BASE, 3);
+    IntEnable(INT_ADC0SS3);
+
+    //Timer0
+//    // It acts as the trigger source
+//    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
+//    samplePeriod = SysCtlClockGet()/ADCsampleFreq;
+//    TimerLoadSet(TIMER0_BASE, TIMER_A, samplePeriod-1);
+//    TimerControlTrigger(TIMER0_BASE, TIMER_A, true);
+//    TimerEnable(TIMER0_BASE, TIMER_A);
+}
+
+
+
+void addADCIntHandler(){
+    ADCIntClear(ADC0_BASE, 3);
+   // while(!ADCIntStauts(ADC0_BASE, 3, false)){}
+    ADCSequenceDataGet(ADC0_BASE, 3, ADCValue);
+}
+
+uint32_t getaddADCVal(){
+    return ADCValue[0];
+}
+
+void logPID(){
+    //dutyCycleOutput = getaddADCVal();
+    //LoadCellValue = getLoadCellValue();
+
+    //only for conversions
+    int intload, fracload, intPWM, fracPWM;
+    double loadCellOut, error, OutDuty, gDuty;
+
+    loggerCount++;
+
+    //Measure Load Cell value
+    loadCellOut = measuredLoad();
+    intload = loadCellOut;
+    fracload = (loadCellOut - intload)*1000;
+
+    //PWM output
+    OutDuty = getaddADCVal();
+//    if(OutDuty<0){
+//        sign = -1;
+//        OutDuty = OutDuty*sign;
+//    }
+    intPWM = OutDuty; //*sign;
+    //fracPWM = (OutDuty-intPWM)*1000;
+
+
+    UARTprintf("%d, %d.%2d, %d\n", loggerCount, intload, fracload, intPWM);
+}
+
+
+//------------------logger_Adaptive_ForceControl()---------------------------
+//Logger function to be called for logging data for force control Adaptive
+//Input: None
+//Output: None
+void logger_Adaptive_ForceControl(void){
+    //only for conversions
+    int intload, fracload, intErr, fracErr, intPWM, fracPWM, dir, intgDuty, fracgDuty;
+    int sign = 1;
+    double loadCellOut, error, OutDuty, gDuty;
+
+    //loggerCount++;
+
+    //Measure Load Cell value
+    loadCellOut = measuredLoad();
+    intload = loadCellOut;
+    fracload = (loadCellOut - intload)*1000;
+
+    //Measure Error
+    error = getError();
+    if(error<0){
+        sign = -1;
+        error = error*sign;
+    }
+    intErr = error*sign;
+    fracErr = (error-intErr)*1000;
+
+    //PWM output
+    OutDuty = getMRACoutput();
+    if(OutDuty<0){
+        sign = -1;
+        OutDuty = OutDuty*sign;
+    }
+    intPWM = OutDuty*sign;
+    fracPWM = (OutDuty-intPWM)*1000;
+
+    ////Direction
+    //dir = getglobaldirection();
+    //
+    ////Global duty
+    //gDuty = getglobalduty();
+    //intgDuty = gDuty;
+    //fracgDuty = (gDuty-intgDuty)*1000;
+
+    UARTprintf("%d.%2d, %d.%2d, %d.%2d \n", intload, fracload, intPWM, fracPWM, intErr, fracErr);
 }

@@ -1,0 +1,26 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+SHELL = cmd.exe
+
+# Add inputs and outputs from these tool invocations to the build variables 
+C_SRCS += \
+../Testing/testPeripherals.c 
+
+C_DEPS += \
+./Testing/testPeripherals.d 
+
+OBJS += \
+./Testing/testPeripherals.obj 
+
+OBJS__QUOTED += \
+"Testing\testPeripherals.obj" 
+
+C_DEPS__QUOTED += \
+"Testing\testPeripherals.d" 
+
+C_SRCS__QUOTED += \
+"../Testing/testPeripherals.c" 
+
+

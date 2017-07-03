@@ -1,0 +1,51 @@
+
+// PID_ForceControl
+// Application 1
+// Implement PID force control
+
+// Author : Shriya Shah
+
+#include "slugTest.h"
+
+double setPointForce = 50;
+
+int main(void){
+
+    // Initialize clock at 80 MHZ frequency
+    Clock_set_80MHz();
+
+//    // Initialize Console
+    int BaudRate  = 115200;
+    uint32_t loggerFreq = 500; //1 KHz
+    Logger_Init(loggerFreq, BaudRate);
+
+    // Initialize motor
+    uint32_t pwmFreq = 20000; // 20KHz
+    Motor_Init(pwmFreq);
+
+    // Initialize Load Cell
+    int hardwareAveraging, ADCsampleFreq;
+    hardwareAveraging = 8;
+    ADCsampleFreq = 8000; //8 KHz
+    LoadCell_init(hardwareAveraging, ADCsampleFreq);
+
+
+    // Initialize controller
+    setGoalForce(setPointForce);
+    uint32_t controllerFreq = 2000; //2kHZ
+    Controller_Init(controllerFreq);
+    ControllerEnable();
+
+    // Enable all interrupts and channels
+    EnableInterrupts();
+
+    // For debugging
+    RGBled_Init(0, 0, 1); //Blue
+
+
+    while(1){
+        // Do nothing
+    }
+
+}
+

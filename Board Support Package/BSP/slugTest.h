@@ -7,6 +7,7 @@ uint32_t raw, tempC, tempF, i = 0;
 
 // Load Cell
 uint32_t rawLoadCellVal;
+uint32_t rawADC2Val;
 float LoadCellVol, LoadCellN;
 
 //----------------------------------------------------------------------------

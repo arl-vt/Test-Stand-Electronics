@@ -457,6 +457,30 @@ void Controller_Init(uint32_t Controllerfreq);
 //Output: None
 void ControllerIntHandler(void);
 
+//------------------setGlobalControllerFreq()---------------------------
+//Set global variable controller freq
+//Input: Controller freq
+//Output: None
+void setGlobalControllerFreq(uint32_t);
+
+//------------------getGlobalControllerFreq()---------------------------
+//Get global variable controller freq
+//Input: None
+//Output: Controller freq
+uint32_t getGlobalControllerFreq(void);
+
+//------------------setGlobalControllerTicks()---------------------------
+//Set global variable controller tick
+//Input: Controller tick
+//Output: None
+void setGlobalControllerTicks(uint32_t);
+
+//------------------getGlobalControllerTicks()---------------------------
+//Get global variable controller tick
+//Input: None
+//Output: Controller tick
+uint32_t getGlobalControllerTicks(void);
+
 //------------------Swing_control()---------------------------
 //Implement simple feedforward swing motion on leg
 //Input: None
@@ -467,15 +491,37 @@ void Swing_control(void);
 //PID control function
 //Input: None
 //Output: None
-void PID_conrol(void);
+void PID_control(void);
 
+//------------------Adaptive_control()---------------------------
+//Adaptive control function
+//Input: None
+//Output: None
+void Adaptive_control(void);
 
+//------------------getControllerTimePeriod()---------------------------
+//Get time period of controller in seconds
+//Input: Controller frequency
+//Output: Time period in second
+double getControllerTimePeriod(uint32_t);
+
+//------------------GetSystemTime()---------------------------
+//Get time since the system started
+//Input: Controller ticks, controller time period,
+//Output: Time period in second
+double GetSystemTime(uint32_t, double);
 
 //------------------ControllerEnable()---------------------------
 //Enable Timer 1A
 //Input: None
 //Output: None
 void ControllerEnable(void);
+
+//------------------Sgn()---------------------------
+//Return sign
+//Input: None
+//Output: None
+int Sgn(double);
 
 //------------------getGoalFlag()---------------------------
 //Returns controller flag variable
@@ -488,7 +534,7 @@ uint32_t getGoalFlag(void);
 //Returns controller flag variable
 //Input: None
 //Output: None
-void setGoalFlag(uin32_t);
+void setGoalFlag(uint32_t);
 
 //------------------setGoalForce()---------------------------
 //Set the global variable RefForce
@@ -520,6 +566,12 @@ double getError(void);
 //Output: out
 double getPIDoutput(void);
 
+//------------------getMRACoutput()---------------------------
+//Get output in MRAC
+//Input: None
+//Output: out
+double getMRACoutput(void);
+
 //------------------checkIntegralLimit()---------------------------
 //Wrap up integral Error
 //Input: None
@@ -532,3 +584,22 @@ double checkIntegralLimit(double);
 //Output: flag of whether goal reached or not
 uint32_t deadBandCheck(double);
 
+//------------------logger_PID_ForceControl()---------------------------
+//Logger function to be called for logging data for force control PID
+//Input: None
+//Output: None
+void logger_PID_ForceControl(void);
+
+//------------------logger_Adaptive_ForceControl()---------------------------
+//Logger function to be called for logging data for force control Adaptive
+//Input: None
+//Output: None
+void logger_Adaptive_ForceControl(void);
+
+void addADCIntHandler(void);
+
+void addADC_Init(int hardwareAveraging, int ADCsampleFreq);
+
+uint32_t getaddADCVal(void);
+
+void logPID(void);

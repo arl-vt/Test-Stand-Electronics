@@ -122,13 +122,26 @@ main.obj: C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IInstance.h
 main.obj: C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IModule.h
 main.obj: C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IModule.h
 main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdbool.h
+main.obj: ../slug.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/math.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/linkage.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/_defs.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/utils/uartstdio.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdarg.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_types.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_memmap.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/tm4c123gh6pm.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_gpio.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_ints.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/sysctl.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/gpio.h
-main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_ints.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/pin_map.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/pwm.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/interrupt.h
 main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/timer.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/uart.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/adc.h
+main.obj: C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/debug.h
 
 ../main.c: 
 C:/ti/xdctools_3_32_01_22_core/packages/xdc/std.h: 
@@ -252,10 +265,23 @@ C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IInstance.h:
 C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IModule.h: 
 C:/ti/xdctools_3_32_01_22_core/packages/xdc/runtime/IModule.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdbool.h: 
+../slug.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/math.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/linkage.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/_defs.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/utils/uartstdio.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.3.0.STS/include/stdarg.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_types.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_memmap.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/tm4c123gh6pm.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_gpio.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_ints.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/sysctl.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/gpio.h: 
-C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/inc/hw_ints.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/pin_map.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/pwm.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/interrupt.h: 
 C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/timer.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/uart.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/adc.h: 
+C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/debug.h: 

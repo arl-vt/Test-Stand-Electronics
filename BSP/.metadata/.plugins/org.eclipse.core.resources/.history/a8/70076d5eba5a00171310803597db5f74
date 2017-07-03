@@ -1,0 +1,311 @@
+
+// slugTest.c
+// Defines tests for every perigperal on the BSP
+// Add the slug.c and slug.h file in the same folder
+// Function declarations in slugTes.h
+
+// Author : Shriya Shah
+#include "slugTest.h"
+
+
+int main(void){
+
+    // Initialize clock at 80 MHZ frequency
+    Clock_set_80MHz();
+
+    // Test LED - Blue
+    //testBlueLED();
+
+    // Test LED - Yellow
+    //testBYellowLED();
+
+    // Test TIVA Launchpad LED and Button1 - Input and Output
+    //testTivaLED_Switch();
+
+    // Test Timer and Interrupts
+    //testTimerToggle();
+
+    // Test Console
+    //testConsole();
+
+    // Test logger
+    //testLogger();
+
+    // Test Temperature Sensor
+    //testTempSensor();
+
+    // Test DC Motor
+    testMotor();
+
+    // Test Load Cell
+    //testloadCell();
+
+    // Test Controller
+    //testController();
+
+}
+
+
+//----------------------------------------------------------------------------
+// Test Toggle behavior of Blue LED
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testBlueLED(){
+    BlueLED_Init();
+
+    while(1){
+
+        // Toggle 1
+        BlueLED_Set();
+        delayMS(100);
+        BlueLED_Clear();
+        delayMS(100);
+
+        // Toggle 2
+        BlueLED_Toggle();
+        delayMS(500);
+        BlueLED_Toggle();
+        delayMS(500);
+    }
+
+}
+
+//----------------------------------------------------------------------------
+// Test Toggle behavior of Yellow LED
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testBYellowLED(){
+    YellowLED_Init();
+
+    while(1){
+
+        // Toggle 1
+        YellowLED_Set();
+        delayMS(100);
+        YellowLED_Clear();
+        delayMS(100);
+
+        // Toggle 2
+        YellowLED_Toggle();
+        delayMS(500);
+        YellowLED_Toggle();
+        delayMS(500);
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+// Test Turn ON/OFF behavior of TIVA Launchpad
+// Button press
+// Toggle behavior
+//----------------------------------------------------------------------------
+void testTivaLED_Switch(void){
+    RGBled_Init(1, 1, 1); // Initialize all
+    Button1_Init();
+
+    while(1){
+                // Test RGB LEDS
+//                RGBled_Set(1, 1, 0);
+//                Delay_cycle(2000000);
+//                RGBled_Set(1, 0, 0);
+//                Delay_cycle(2000000);
+
+
+                // Test Toggle Behavior
+//                RGBled_Toggle(1, 0, 0);
+//                Delay_cycle(2000000);
+//                RGBled_Toggle(0, 1, 0);
+//                Delay_cycle(2000000);
+
+
+                //Test Button input
+//                if(Button1_Input()==0){
+//                    RGBled_Set(0, 1, 0); //Set green on Press
+//                }else{
+//                    RGBled_Set(0, 0, 1); // Set Blue on Release
+//                }
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Timer module and Interrupt generation
+// Toggle LED at 10 HZ
+//----------------------------------------------------------------------------
+void testTimerToggle(){
+    // Initialize LED
+    RGBled_Init(0, 0, 1); //Initialize blue led
+
+    // Define toggle frequency
+    int freq = 10; //10Hz frequency of toggling
+
+    // Initialize Timer0A
+    initTimer0(freq);
+
+    // Enable system wide interrupts
+    EnableInterrupts();
+
+    while(1){
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test the Serial Monitor Connection with the computer
+// Uses the microUSB port on TIVA
+// Use the printf facility
+//----------------------------------------------------------------------------
+void testConsole(){
+    bool flag = 1;
+    int i = 0;
+
+    int BaudRate  = 115200;
+    initConsole(BaudRate);
+
+    UARTprintf("System Startup");
+
+    while(1){
+        if(flag==1){
+            UARTprintf("%d \n", i);
+            i++;
+        }
+
+        if(i==10){
+            flag = 0;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Logger - Serial Monitor and Timer2
+// Uses the microUSB port on TIVA
+// Use the printf facility
+//----------------------------------------------------------------------------
+void testLogger(){
+    int BaudRate  = 115200;
+
+    uint32_t loggerFreq = 10; //10 Hz
+
+    Logger_Init(loggerFreq, BaudRate);
+
+    UARTprintf("System Startup");
+
+    while(1){
+        // Do nothing
+    }
+
+}
+
+//----------------------------------------------------------------------------
+// Test the Serial Monitor Connection with the computer
+// Uses the microUSB port on TIVA, has an ISR
+//----------------------------------------------------------------------------
+void testSerialMonitor(){
+    SerialMonitor_Init();
+
+    while(1){
+        //SerialMonitor_Loop();
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Temperature sensor on ADC0
+// On Interrupt with Serial Monitor connected
+//----------------------------------------------------------------------------
+void testTempSensor(){
+
+    int BaudRate  = 115200;
+    int hardwareAverage = 8;
+    initConsole(BaudRate);
+    tempSensor_Init(hardwareAverage);
+    EnableInterrupts();
+
+    UARTprintf("\n Recording internal Temp Sensor: \n");
+
+    while(1){
+        //Trigger temp read
+        tempSensor_startConversion();
+
+        raw = getAvgTemp();
+        tempC = convert2C(raw);
+        tempF = convert2F(raw);
+        UARTprintf("Avg temp is: %4d, *C is: %4d, *F is: %4d\n", raw, tempC, tempF);
+        delayMS(1);
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Motor
+// On a while loop that achieves full leg swing on THOR
+//----------------------------------------------------------------------------
+void testMotor(){
+    uint32_t pwmFreq = 10000; // 10KHz
+    Motor_Init(pwmFreq);
+
+    while(1){
+        motorSendCommand(5, 1);
+        delayMS(700);
+        motorSendCommand(5, 0);
+        delayMS(700);
+    }
+
+}
+
+//----------------------------------------------------------------------------
+// Test LoadCell
+// RRecord the data from load cell
+//----------------------------------------------------------------------------
+
+void testloadCell(){
+    int hardwareAveraging, ADCsampleFreq;
+
+    hardwareAveraging = 4;
+    ADCsampleFreq = 500; //500 Hz
+
+    LoadCell_init(hardwareAveraging, ADCsampleFreq);
+    EnableInterrupts();
+
+    while(1){
+        rawLoadCellVal = getLoadCellValue();
+        LoadCellVol = adc2Vol(rawLoadCellVal);
+        delayMS(1);
+    }
+}
+
+//----------------------------------------------------------------------------
+// Test Controller
+// Record the data from load cell and apply feedforward trajectory to motor
+//----------------------------------------------------------------------------
+
+void testController(){
+    // Initialize Console
+    int BaudRate  = 115200;
+    uint32_t loggerFreq = 100; //100 Hz
+    Logger_Init(loggerFreq, BaudRate);
+
+    // Initialize motor
+    uint32_t pwmFreq = 20000; // 20KHz
+    Motor_Init(pwmFreq);
+
+    // Initialize Load Cell
+    int hardwareAveraging, ADCsampleFreq;
+    hardwareAveraging = 4;
+    ADCsampleFreq = 500; //500 Hz
+    LoadCell_init(hardwareAveraging, ADCsampleFreq);
+
+
+    // Initialize controller
+    uint32_t controllerFreq = 2000; //2kHZ
+    Controller_Init(controllerFreq);
+    ControllerEnable();
+
+    // Enable all interrupts and channels
+    EnableInterrupts();
+
+    // For debugging
+    RGBled_Init(0, 0, 1); //Blue
+
+    while(1){
+        // Do nothing
+    }
+}
+

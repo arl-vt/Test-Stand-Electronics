@@ -7211,6 +7211,11 @@ Output 24V, 12V, 15V</text>
 <wire x1="281.94" y1="101.6" x2="279.4" y2="101.6" width="0.1524" layer="91"/>
 <label x="279.4" y="101.6" size="1.778" layer="95" rot="R90"/>
 </segment>
+<segment>
+<pinref part="X4" gate="-1" pin="S"/>
+<wire x1="312.42" y1="165.1" x2="304.8" y2="165.1" width="0.1524" layer="91"/>
+<label x="304.8" y="165.1" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="N$7" class="0">
 <segment>
@@ -7238,13 +7243,6 @@ Output 24V, 12V, 15V</text>
 <pinref part="R10" gate="G$1" pin="2"/>
 <pinref part="12" gate="G$1" pin="A"/>
 <wire x1="292.1" y1="81.28" x2="294.64" y2="81.28" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="15V" class="0">
-<segment>
-<pinref part="X4" gate="-1" pin="S"/>
-<wire x1="312.42" y1="165.1" x2="304.8" y2="165.1" width="0.1524" layer="91"/>
-<label x="304.8" y="165.1" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -7302,7 +7300,7 @@ Output 24V, 12V, 15V</text>
 <label x="106.68" y="149.86" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="24V" class="0">
+<net name="+24V" class="0">
 <segment>
 <wire x1="78.74" y1="165.1" x2="91.44" y2="165.1" width="0.1524" layer="91"/>
 <label x="91.44" y="165.1" size="1.778" layer="95" xref="yes"/>

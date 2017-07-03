@@ -1,6 +1,6 @@
 % Read file
 clc; clear all; close all
-F = readtable('loadCell_tacuna_8HardAvg.csv');
+F = readtable('loadCell_tac_4HardAvg_legSwing_slow.csv');
 
 samples = F.Sample_float;
 temp_samples = str2double(samples);
@@ -10,5 +10,5 @@ temp_adc = str2double(data);
 plot(temp_samples, temp_adc);
 xlabel('Samples');
 ylabel('ADC Read');
-title('Load Cell reading with stationary leg and some random disturbance');
-legend('Hardware filtering');
+title('Load Cell reading with Slow Leg Swing');
+legend('Hardware filtering, 4 samples');

@@ -1,0 +1,5 @@
+error: ti.sysbios.family.arm.lm4.Timer: "C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/lm4/Timer.xs", line 241: ti.sysbios.family.arm.lm4.Timer.Instance_State#0 : Timer interrupt 35 already in use!
+js: "C:/ti/xdctools_3_32_01_22_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+xdctools_3_32_01_22_core\gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Error 1
+xdctools_3_32_01_22_core\gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Deleting file `package/cfg/empty_min_pem4f.h'
+xdctools_3_32_01_22_core\gmake.exe: *** [package/cfg/empty_min_pem4f.xdl] Deleting file `package/cfg/empty_min_pem4f.c'
