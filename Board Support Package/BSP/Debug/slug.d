@@ -23,6 +23,7 @@ slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/timer.h
 slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h
 slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/adc.h
 slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/debug.h
+slug.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/qei.h
 
 ../slug.c: 
 ../slug.h: 
@@ -47,3 +48,4 @@ C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/timer.h:
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/uart.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/adc.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/debug.h: 
+C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/qei.h: 

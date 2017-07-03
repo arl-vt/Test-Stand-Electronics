@@ -606,27 +606,7 @@ uint32_t getaddADCVal(void);
 void logPID(void);
 
 //------------------IncEncoder_Init()---------------------------
-//Initialize Incremental Encoder
+//Logger function to be called for logging data for force control Adaptive
 //Input: None
 //Output: None
-void IncEncoder_Init(uint32_t, uint32_t);
-
-//------------------getIncEncoderPosition()---------------------------
-//Get position from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderPosition(void);
-
-//------------------getIncEncoderVelocity()---------------------------
-//Get velocity from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderVelocity(void);
-
-//------------------getIncEncoderDirection()---------------------------
-//Get velocity from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderDirection(void);
-
-
+void IncEncoder_Init(uint32_t, uint32_t)

@@ -1430,7 +1430,7 @@ void logger_Adaptive_ForceControl(void){
 }
 
 //------------------IncEncoder_Init()---------------------------
-//Initialize Incremental Encoder
+//Logger function to be called for logging data for force control Adaptive
 //Input: None
 //Output: None
 void IncEncoder_Init(uint32_t topLimit, uint32_t startVal){
@@ -1458,23 +1458,3 @@ void IncEncoder_Init(uint32_t topLimit, uint32_t startVal){
     //Set position to the required start value
     QEIPositionSet(QEI1_BASE, startVal);
 }
-
-//------------------getIncEncoderPosition()---------------------------
-//Get position from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderPosition(void){
-    return QEIPositionGet(QEI1_BASE);
-}
-
-//------------------getIncEncoderVelocity()---------------------------
-//Get velocity from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderVelocity(void);
-
-//------------------getIncEncoderDirection()---------------------------
-//Get velocity from Incremental encoder
-//Input: None
-//Output: None
-uint32_t getIncEncoderDirection(void);
